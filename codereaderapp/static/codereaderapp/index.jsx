@@ -13,7 +13,7 @@ var FileView = React.createClass({
         };
     },
     onFileSelected: function(name) {
-        $.get('/file', function(result) {
+        $.get('/file/' + name, function(result) {
             this.setState(result);
         }.bind(this));
     },
@@ -28,12 +28,37 @@ var FileView = React.createClass({
 });
 
 var FileSearch = React.createClass({
+    getInitialState: function() {
+        return {
+            files: []
+        };
+    },
     componentDidMount: function() {
-        this.props.onFileSelected("hello.js");
+        $.get('/file_list', function(result) {
+            this.setState(result);
+        }.bind(this));
+    },
+    render: function() {
+        var links = this.state.files.map(function(file) {
+            return (
+                <li>
+                    <FileLink name={file} onFileSelected={this.props.onFileSelected} />
+                </li>
+            )
+        }.bind(this));
+        return (
+            <li>{links}</li>
+        );
+    }
+});
+
+var FileLink = React.createClass({
+    onClick: function() {
+        this.props.onFileSelected(this.props.name);
     },
     render: function() {
         return (
-            <p>Search...</p>
+            <a href="#" onClick={this.onClick}>{this.props.name}</a>
         );
     }
 });

@@ -1,3 +1,5 @@
+import subprocess
+
 from django.shortcuts import render
 from django.http import JsonResponse
 
@@ -8,18 +10,19 @@ def index(request):
 
 def file_list(request):
     return JsonResponse({
-        'files': ['hello.js', 'foo.html'],
+        'files': subprocess.check_output(["ack", "-f"]).decode("utf-8").strip().split("\n"),
     })
 
 
-def file(request):
+def file(request, name):
+    lines = []
+    with open(name) as f:
+        for (index, line) in enumerate(f):
+            lines.append({
+                'row': index + 1,
+                'text': line,
+            })
     return JsonResponse({
-        'name': 'hello.django.js',
-        'lines': [
-              {'row': 1, 'text': 'import foo'},
-              {'row': 2, 'text': 'foo.hello()'},
-              {'row': 3, 'text': ''},
-              {'row': 4, 'text': 'import sys'},
-              {'row': 5, 'text': 'sys.exit(1)'},
-        ],
+        'name': name,
+        'lines': lines,
     })
