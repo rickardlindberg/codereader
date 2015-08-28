@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
 
-def file(request):
-    from django.http import HttpResponse
-    return HttpResponse("hello world")
+def index(request):
+    return render(request, 'codereaderapp/index.html')
