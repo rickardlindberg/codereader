@@ -20,7 +20,11 @@ def file(request, name):
         for (index, line) in enumerate(f):
             lines.append({
                 'row': index + 1,
-                'text': line,
+                'parts': [
+                    {
+                        'text': line,
+                    },
+                ],
             })
     return JsonResponse({
         'name': name,

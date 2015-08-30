@@ -66,7 +66,7 @@ var FileLink = React.createClass({
 var File = React.createClass({
     render: function() {
         var lines = this.props.file.lines.map(function(line) {
-            return <Line line={line} key={line.row} />;
+            return <Line line={line} />;
         });
         return (
             <div>
@@ -74,7 +74,9 @@ var File = React.createClass({
                     <strong>{this.props.file.name}</strong>
                 </div>
                 <div style={boxStyle}>
-                    {lines}
+                    <pre>
+                        {lines}
+                    </pre>
                 </div>
             </div>
         );
@@ -83,10 +85,17 @@ var File = React.createClass({
 
 var Line = React.createClass({
     render: function() {
+        var parts = this.props.line.parts.map(function(part) {
+            return (
+                <span>
+                    {part.text}
+                </span>
+            );
+        });
         return (
-            <pre>
-                {this.props.line.text}
-            </pre>
+            <span>
+                {parts}
+            </span>
         );
     }
 });
