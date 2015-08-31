@@ -1,9 +1,3 @@
-var boxStyle = {
-    border: 1,
-    borderStyle: 'solid',
-    padding: 2
-};
-
 var FileView = React.createClass({
     getInitialState: function() {
         return {
@@ -19,9 +13,13 @@ var FileView = React.createClass({
     },
     render: function() {
         return (
-            <div>
-                <FileSearch onFileSelected={this.onFileSelected} />
-                <File file={this.state} />
+            <div className="span-24 last">
+                <div className="span-24 last">
+                    <FileSearch onFileSelected={this.onFileSelected} />
+                </div>
+                <div className="span-24 last">
+                    <File file={this.state} />
+                </div>
             </div>
         );
     }
@@ -69,12 +67,12 @@ var File = React.createClass({
             return <Line line={line} />;
         });
         return (
-            <div>
-                <div style={boxStyle}>
+            <div className="file">
+                <div className="fileHeader">
                     <strong>{this.props.file.name}</strong>
                 </div>
-                <div style={boxStyle}>
-                    <pre className="highlight">
+                <div className="fileBody code">
+                    <pre>
                         {lines}
                     </pre>
                 </div>
