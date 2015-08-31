@@ -1,6 +1,7 @@
 from pygments.formatter import Formatter
 from pygments import highlight
 from pygments.lexers import guess_lexer_for_filename
+from pygments.lexers import TextLexer
 from pygments.token import STANDARD_TYPES
 
 from codereaderapp.annotations import Annotation
@@ -32,8 +33,12 @@ def get_annotations(name):
                 ))
                 row = new_row
                 column = new_column
-    content = open(name).read()
-    lexer = guess_lexer_for_filename(name, content)
-    formatter = MyFormatter()
-    highlight(content, lexer, formatter)
-    return Annotations(formatter.annotation_list)
+    with open(name) as f:
+        content = f.read()
+        try:
+            lexer = guess_lexer_for_filename(name, content)
+        except:
+            lexer = TextLexer()
+        formatter = MyFormatter()
+        highlight(content, lexer, formatter)
+        return Annotations(formatter.annotation_list)
