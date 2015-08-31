@@ -10,16 +10,15 @@ class Annotations(object):
     def get_intersections(self, line):
         intersections = set()
         for annotation in self._annotations_list:
-            for intersection in annotation.get_intersections(line):
-                intersections.add(intersection)
+            intersections.update(annotation.get_intersections(line))
         return intersections
 
     def get_all_covering(self, row, column):
-        x = []
-        for annotation in self._annotations_list:
-            if annotation.has_location(row, column):
-                x.append(annotation._data)
-        return x
+        return [
+            annotation._data
+            for annotation in self._annotations_list
+            if annotation.has_location(row, column)
+        ]
 
 
 class Annotation(object):
@@ -32,11 +31,24 @@ class Annotation(object):
         self._data = data
 
     def get_intersections(self, line):
-        return {self._start_column - 1, self._end_column}
+        intersections = set()
+        if (self._is_after_start(line.get_row(), len(line.get_text())) and
+            self._is_before_end(line.get_row(), 1)):
+            intersections.add(self._start_column - 1)
+            intersections.add(self._end_column)
+        return intersections
 
     def has_location(self, row, column):
-        return (column >= self._start_column and
-                column <= self._end_column)
+        return (self._is_after_start(row, column) and
+                self._is_before_end(row, column))
+
+    def _is_after_start(self, row, column):
+        return (row > self._start_row or
+                (row == self._start_row and column >= self._start_column))
+
+    def _is_before_end(self, row, column):
+        return (row < self._end_row or
+                (row == self._end_row and column <= self._end_column))
 
 
 class Line(object):
@@ -44,6 +56,12 @@ class Line(object):
     def __init__(self, row, text):
         self._row = row
         self._text = text
+
+    def get_row(self):
+        return self._row
+
+    def get_text(self):
+        return self._text
 
     def partition(self, annotations):
         return [
@@ -73,7 +91,7 @@ class Line(object):
         return self._text[start_column - 1 : end_column]
 
 
-class TestPartify(unittest.TestCase):
+class TestLinePartition(unittest.TestCase):
 
     def test_no_annotations(self):
         self.assertEqual(
@@ -96,6 +114,50 @@ class TestPartify(unittest.TestCase):
                 {
                     "text": "he",
                     "annotations": [sentinel.ANNOTATION],
+                },
+                {
+                    "text": "llo",
+                    "annotations": [],
+                },
+            ]
+        )
+
+    def test_two_annotations(self):
+        self.assertEqual(
+            Line(1, "hello").partition(Annotations([
+                Annotation(1, 1, 1, 2, sentinel.ANNOTATION_1),
+                Annotation(1, 2, 1, 3, sentinel.ANNOTATION_2),
+            ])),
+            [
+                {
+                    "text": "h",
+                    "annotations": [sentinel.ANNOTATION_1],
+                },
+                {
+                    "text": "e",
+                    "annotations": [sentinel.ANNOTATION_1, sentinel.ANNOTATION_2],
+                },
+                {
+                    "text": "l",
+                    "annotations": [sentinel.ANNOTATION_2],
+                },
+                {
+                    "text": "lo",
+                    "annotations": [],
+                },
+            ]
+        )
+
+    def test_skips_annotations_where_line_does_not_match(self):
+        self.assertEqual(
+            Line(1, "hello").partition(Annotations([
+                Annotation(1, 1, 1, 2, sentinel.ANNOTATION_1),
+                Annotation(2, 1, 2, 3, sentinel.ANNOTATION_2),
+            ])),
+            [
+                {
+                    "text": "he",
+                    "annotations": [sentinel.ANNOTATION_1],
                 },
                 {
                     "text": "llo",
