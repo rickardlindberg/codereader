@@ -3,6 +3,9 @@ import subprocess
 from django.shortcuts import render
 from django.http import JsonResponse
 
+from codereaderapp.analyzers.syntax_highlight import get_annotations
+from codereaderapp.annotations import Line
+
 
 def index(request):
     return render(request, 'codereaderapp/index.html')
@@ -16,15 +19,12 @@ def file_list(request):
 
 def file(request, name):
     lines = []
+    annotations = get_annotations(name)
     with open(name) as f:
         for (index, line) in enumerate(f):
             lines.append({
                 'row': index + 1,
-                'parts': [
-                    {
-                        'text': line,
-                    },
-                ],
+                'parts': Line(index + 1, line).partition(annotations),
             })
     return JsonResponse({
         'name': name,
