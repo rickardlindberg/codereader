@@ -74,7 +74,7 @@ var File = React.createClass({
                     <strong>{this.props.file.name}</strong>
                 </div>
                 <div style={boxStyle}>
-                    <pre>
+                    <pre className="highlight">
                         {lines}
                     </pre>
                 </div>
@@ -86,8 +86,15 @@ var File = React.createClass({
 var Line = React.createClass({
     render: function() {
         var parts = this.props.line.parts.map(function(part) {
+            var classes = "";
+            part.annotations.map(function(annotation) {
+                if (annotation.type === "style") {
+                    classes += annotation.what;
+                    classes += " ";
+                }
+            });
             return (
-                <span>
+                <span className={classes}>
                     {part.text}
                 </span>
             );

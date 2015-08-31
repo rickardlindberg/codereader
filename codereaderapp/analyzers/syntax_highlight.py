@@ -1,6 +1,7 @@
 from pygments.formatter import Formatter
 from pygments import highlight
 from pygments.lexers import guess_lexer_for_filename
+from pygments.token import STANDARD_TYPES
 
 from codereaderapp.annotations import Annotation
 from codereaderapp.annotations import Annotations
@@ -24,7 +25,10 @@ def get_annotations(name):
                     column,
                     new_row,
                     new_column,
-                    {}
+                    {
+                        "type": "style",
+                        "what": STANDARD_TYPES.get(token_type, ""),
+                    }
                 ))
                 row = new_row
                 column = new_column
