@@ -1,6 +1,6 @@
 from pygments.formatter import Formatter
 from pygments import highlight
-from pygments.lexers import guess_lexer_for_filename
+from pygments.lexers import get_lexer_for_filename
 from pygments.lexers import TextLexer
 from pygments.token import STANDARD_TYPES
 from pygments.token import Token
@@ -12,7 +12,7 @@ def get_annotations(name):
     with open(name) as f:
         content = f.read()
         try:
-            lexer = guess_lexer_for_filename(name, content)
+            lexer = get_lexer_for_filename(name, content)
         except:
             lexer = TextLexer()
         formatter = ExtractAnnotationsFormatter()
