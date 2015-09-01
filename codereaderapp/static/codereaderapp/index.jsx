@@ -4,9 +4,9 @@ var FileView = React.createClass({
             files: []
         };
     },
-    onFileSelected: function(name) {
-        $.get('/file/' + name, function(result) {
-            result.selectedRow = 5;
+    onLocationSelected: function(location) {
+        $.get('/file/' + location.file, function(result) {
+            result.selectedRow = location.row;
             this.setState({
                 files: this.state.files.concat([result])
             });
@@ -19,7 +19,7 @@ var FileView = React.createClass({
         return (
             <div className="span-24 last">
                 <div className="span-24 last">
-                    <FileSearch onFileSelected={this.onFileSelected} />
+                    <LocationSearch onLocationSelected={this.onLocationSelected} />
                 </div>
                 <div className="span-24 last">
                     {files}
@@ -29,7 +29,7 @@ var FileView = React.createClass({
     }
 });
 
-var FileSearch = React.createClass({
+var LocationSearch = React.createClass({
     getInitialState: function() {
         return {
             files: []
@@ -44,7 +44,7 @@ var FileSearch = React.createClass({
         var links = this.state.files.map(function(file) {
             return (
                 <li>
-                    <FileLink name={file} onFileSelected={this.props.onFileSelected} />
+                    <LocationLink name={file} onLocationSelected={this.props.onLocationSelected} />
                 </li>
             )
         }.bind(this));
@@ -54,9 +54,12 @@ var FileSearch = React.createClass({
     }
 });
 
-var FileLink = React.createClass({
+var LocationLink = React.createClass({
     onClick: function(event) {
-        this.props.onFileSelected(this.props.name);
+        this.props.onLocationSelected({
+            file: this.props.name,
+            row: 5
+        });
         event.preventDefault();
     },
     render: function() {
