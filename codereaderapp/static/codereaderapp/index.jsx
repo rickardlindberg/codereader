@@ -6,6 +6,7 @@ var FileView = React.createClass({
     },
     onFileSelected: function(name) {
         $.get('/file/' + name, function(result) {
+            result.selectedRow = 5;
             this.setState({
                 files: this.state.files.concat([result])
             });
@@ -71,8 +72,9 @@ var File = React.createClass({
     },
     render: function() {
         var lines = this.props.file.lines.map(function(line) {
-            return <Line line={line} />;
-        });
+            var scrollTo = this.props.file.selectedRow === line.row;
+            return <Line scrollTo={scrollTo} line={line} />;
+        }.bind(this));
         return (
             <div className="file">
                 <div className="fileHeader">
@@ -89,6 +91,11 @@ var File = React.createClass({
 });
 
 var Line = React.createClass({
+    componentDidMount: function() {
+        if (this.props.scrollTo) {
+            this.getDOMNode().scrollIntoView();
+        }
+    },
     render: function() {
         var parts = this.props.line.parts.map(function(part) {
             var classes = "";
@@ -106,7 +113,7 @@ var Line = React.createClass({
         });
         return (
             <span>
-                {parts}
+            {parts}
             </span>
         );
     }
