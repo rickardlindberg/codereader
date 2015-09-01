@@ -63,6 +63,7 @@
 
 .file {
     border: 1px solid #666666;
+    margin-top: 5px;
 }
 
 .fileHeader {
@@ -73,6 +74,8 @@
 
 .fileBody {
     padding: 5px;
+    max-height: 340px;
+    overflow: auto;
 }
 
 .fileBody pre {
