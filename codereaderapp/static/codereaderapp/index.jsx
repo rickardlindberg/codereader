@@ -1,24 +1,27 @@
 var FileView = React.createClass({
     getInitialState: function() {
         return {
-            name: "",
-            lines: [
-            ]
+            files: []
         };
     },
     onFileSelected: function(name) {
         $.get('/file/' + name, function(result) {
-            this.setState(result);
+            this.setState({
+                files: this.state.files.concat([result])
+            });
         }.bind(this));
     },
     render: function() {
+        var files = this.state.files.map(function(file) {
+            return <File file={file} />
+        });
         return (
             <div className="span-24 last">
                 <div className="span-24 last">
                     <FileSearch onFileSelected={this.onFileSelected} />
                 </div>
                 <div className="span-24 last">
-                    <File file={this.state} />
+                    {files}
                 </div>
             </div>
         );
@@ -51,8 +54,9 @@ var FileSearch = React.createClass({
 });
 
 var FileLink = React.createClass({
-    onClick: function() {
+    onClick: function(event) {
         this.props.onFileSelected(this.props.name);
+        event.preventDefault();
     },
     render: function() {
         return (
@@ -62,6 +66,9 @@ var FileLink = React.createClass({
 });
 
 var File = React.createClass({
+    componentDidMount: function() {
+        this.getDOMNode().scrollIntoView();
+    },
     render: function() {
         var lines = this.props.file.lines.map(function(line) {
             return <Line line={line} />;
