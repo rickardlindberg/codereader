@@ -26,6 +26,24 @@ class Annotation(object):
         self._end_column = end_column
         self._data = data
 
+    def __eq__(self, other):
+        return (self._start_row == other._start_row and
+                self._start_column == other._start_column and
+                self._end_row == other._end_row and
+                self._end_column == other._end_column and
+                self._data == other._data)
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __repr__(self):
+        return "(%d, %d)-(%d, %d) %r" % (
+            self._start_row,
+            self._start_column,
+            self._end_row,
+            self._end_column,
+            self._data)
+
     def get_intersections(self, line):
         intersections = set()
         if (self._is_after_start(line.get_row(), len(line.get_text())) and

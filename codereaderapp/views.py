@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 from codereaderapp.analyzers.syntax_highlight import get_annotations
+from codereaderapp.annotations import Annotations
 from codereaderapp.annotations import Line
 
 
@@ -19,7 +20,7 @@ def file_list(request):
 
 def file(request, name):
     lines = []
-    annotations = get_annotations(name)
+    annotations = Annotations(get_annotations(name))
     with open(name) as f:
         for (index, line) in enumerate(f):
             lines.append({
