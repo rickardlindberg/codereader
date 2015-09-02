@@ -1,18 +1,23 @@
 class Annotations(object):
 
     def __init__(self, annotation_list):
-        self._annotations_list = annotation_list
+        self._annotations_by_row = {}
+        for annotation in annotation_list:
+            for row in annotation.get_rows():
+                if row not in self._annotations_by_row:
+                    self._annotations_by_row[row] = []
+                self._annotations_by_row[row].append(annotation)
 
     def get_intersections(self, line):
         intersections = set()
-        for annotation in self._annotations_list:
+        for annotation in self._annotations_by_row.get(line.get_row(), []):
             intersections.update(annotation.get_intersections(line))
         return intersections
 
     def get_all_covering(self, row, column):
         return [
             annotation._data
-            for annotation in self._annotations_list
+            for annotation in self._annotations_by_row.get(row, [])
             if annotation.has_location(row, column)
         ]
 
@@ -51,6 +56,9 @@ class Annotation(object):
             intersections.add(self._start_column - 1)
             intersections.add(self._end_column)
         return intersections
+
+    def get_rows(self):
+        return list(range(self._start_row, self._end_row + 1))
 
     def has_location(self, row, column):
         return (self._is_after_start(row, column) and
