@@ -35,13 +35,25 @@ def file(request, name):
 
 def search(request, term):
     matches = []
-    for ack_line in subprocess.check_output(["ack", term]).decode("utf-8").strip().split("\n"):
-        parts = ack_line.split(":")
-        if len(parts) >= 3:
+    for ack_line in subprocess.check_output(["ack", "--column", "--output", "$&", term]).decode("utf-8").strip().split("\n"):
+        parts = ack_line.split(":", 4)
+        if len(parts) == 4:
             name = parts[0]
             row = int(parts[1])
+            column = int(parts[2])
+            match = parts[3]
             lines = []
-            annotations = Annotations(get_annotations(name))
+            from codereaderapp.annotations import Annotation
+            x = Annotation(
+                    row,
+                    column,
+                    row,
+                    column-1+len(match),
+                    {
+                        "type": "style",
+                        "what": "hll",
+                    })
+            annotations = Annotations(get_annotations(name) + [x])
             with open(name) as f:
                 for (index, line) in enumerate(f):
                     if (index + 1) in [row - 1, row, row + 1]:
