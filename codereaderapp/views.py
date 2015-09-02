@@ -3,9 +3,9 @@ import subprocess
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from codereaderapp.analyzers.syntax_highlight import get_annotations
-from codereaderapp.annotations import Annotations
-from codereaderapp.annotations import FileRenderer
+from codereaderlib.analyzers.syntax_highlight import get_annotations
+from codereaderlib import Annotations
+from codereaderlib import FileRenderer
 
 
 def index(request):
