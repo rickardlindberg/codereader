@@ -8,14 +8,29 @@ var FileView = React.createClass({
         $.get('/file/' + location.file, function(result) {
             result.selectedRow = location.row;
             this.setState({
-                files: this.state.files.concat([result])
+                files: this.state.files.concat([{type: "file", value: result}])
+            });
+        }.bind(this));
+    },
+    handleSubmit: function(event) {
+        event.preventDefault();
+        var term = React.findDOMNode(this.refs.search).value.trim();
+        $.get('/search/' + term, function(result) {
+            this.setState({
+                files: this.state.files.concat([{type: "search_result", value: result}])
             });
         }.bind(this));
     },
     render: function() {
         var files = this.state.files.map(function(file) {
-            return <File file={file} />
-        });
+            if (file.type === "file") {
+                return <File file={file.value} />;
+            } else if (file.type === "search_result") {
+                return <SearchResult onLocationSelected={this.onLocationSelected} result={file.value} />;
+            } else {
+                return <span>{file.value}</span>;
+            }
+        }.bind(this));
         return (
             <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
@@ -23,7 +38,20 @@ var FileView = React.createClass({
                       <div className="navbar-header">
                           <span className="navbar-brand">Code Reader</span>
                       </div>
-                          <LocationSearch onLocationSelected={this.onLocationSelected} />
+                      <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                          <ul className="nav navbar-nav">
+                              <li className="dropdown">
+                                  <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Files <span className="caret"></span></a>
+                                  <LocationSearch onLocationSelected={this.onLocationSelected} />
+                              </li>
+                          </ul>
+                          <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSubmit}>
+                              <div className="form-group">
+                                  <input type="text" className="form-control" placeholder="Search" ref="search" />
+                              </div>
+                              <button type="submit" className="btn btn-default">Find</button>
+                          </form>
+                      </div>
                   </div>
                 </nav>
                 <div className="container">
@@ -54,15 +82,9 @@ var LocationSearch = React.createClass({
             )
         }.bind(this));
         return (
-            <div className="dropdown navbar-btn">
-                <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Navigate
-                    <span className="caret"></span>
-                </button>
-                <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    {links}
-                </ul>
-            </div>
+            <ul className="dropdown-menu">
+                {links}
+            </ul>
         );
     }
 });
@@ -71,7 +93,7 @@ var LocationLink = React.createClass({
     onClick: function(event) {
         this.props.onLocationSelected({
             file: this.props.name,
-            row: 5
+            row: this.props.row
         });
         event.preventDefault();
     },
@@ -101,6 +123,31 @@ var File = React.createClass({
                         {lines}
                     </pre>
                 </div>
+            </div>
+        );
+    }
+});
+
+var SearchResult = React.createClass({
+    componentDidMount: function() {
+        this.getDOMNode().scrollIntoView();
+    },
+    render: function() {
+        var matches = this.props.result.matches.map(function(match) {
+            return (
+                <li className="list-group-item">
+                    <LocationLink name={match.file} row={match.row} onLocationSelected={this.props.onLocationSelected} />
+                </li>
+            );
+        }.bind(this));
+        return (
+            <div className="panel panel-default">
+                <div className="panel-heading">
+                    <strong>Search results: {this.props.result.term}</strong>
+                </div>
+                <ul className="list-group">
+                    {matches}
+                </ul>
             </div>
         );
     }

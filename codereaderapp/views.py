@@ -31,3 +31,15 @@ def file(request, name):
         'name': name,
         'lines': lines,
     })
+
+
+def search(request, term):
+    matches = []
+    for ack_line in subprocess.check_output(["ack", term]).decode("utf-8").strip().split("\n"):
+        parts = ack_line.split(":")
+        if len(parts) == 3:
+            matches.append({"file": parts[0], "row": int(parts[1])})
+    return JsonResponse({
+        'term': term,
+        'matches': matches,
+    })
