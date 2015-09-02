@@ -7,6 +7,7 @@ from codereaderlib.analyzers.syntax_highlight import get_annotations
 from codereaderlib.annotation import Annotation
 from codereaderlib.annotations import Annotations
 from codereaderlib.file import File
+from codereaderlib.files import list_files
 
 
 def index(request):
@@ -15,7 +16,7 @@ def index(request):
 
 def file_list(request):
     return JsonResponse({
-        'files': subprocess.check_output(["ack", "-f"]).decode("utf-8").strip().split("\n"),
+        'files': list_files(),
     })
 
 
