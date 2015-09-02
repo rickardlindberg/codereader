@@ -104,7 +104,7 @@ var File = React.createClass({
                 <div className="panel-heading">
                     <strong>{this.props.file.name}</strong>
                 </div>
-                <div className="fileBody code">
+                <div className="panel-body file-content">
                     <pre>
                         {lines}
                     </pre>
