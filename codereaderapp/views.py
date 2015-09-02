@@ -24,16 +24,18 @@ def file(request, name):
     return JsonResponse(File(name).render_file(Annotations(get_annotations(name))))
 
 
-def search(request, term):
-    matches = []
-    for ack_line in subprocess.check_output(["ack", "--column", "--output", "$&", term]).decode("utf-8").strip().split("\n"):
+def do_search(term):
+    ack_result = subprocess.check_output(["ack", "--column", "--output", "$&", term])
+    for ack_line in ack_result.decode("utf-8").strip().split("\n"):
         parts = ack_line.split(":", 4)
         if len(parts) == 4:
             name = parts[0]
             row = int(parts[1])
             column = int(parts[2])
             match = parts[3]
-            x = Annotation(
+            yield (
+                name,
+                Annotation(
                     row,
                     column,
                     row,
@@ -41,13 +43,20 @@ def search(request, term):
                     {
                         "type": "style",
                         "what": "hll",
-                    })
-            annotations = Annotations([x])
-            matches.append({
-                "file": name,
-                "row": row,
-                "lines": File(name).render_lines(annotations, [row - 1, row, row + 1]),
-            })
+                    }
+                )
+            )
+
+
+def search(request, term):
+    matches = []
+    for (name, annotation) in do_search(term):
+        row = annotation.get_rows()[0]
+        matches.append({
+            "file": name,
+            "row": row,
+            "lines": File(name).render_lines(Annotations([annotation]), [row-1, row, row+1]),
+        })
     return JsonResponse({
         'term': term,
         'matches': matches,
