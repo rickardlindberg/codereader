@@ -37,8 +37,23 @@ def search(request, term):
     matches = []
     for ack_line in subprocess.check_output(["ack", term]).decode("utf-8").strip().split("\n"):
         parts = ack_line.split(":")
-        if len(parts) == 3:
-            matches.append({"file": parts[0], "row": int(parts[1])})
+        if len(parts) >= 3:
+            name = parts[0]
+            row = int(parts[1])
+            lines = []
+            annotations = Annotations(get_annotations(name))
+            with open(name) as f:
+                for (index, line) in enumerate(f):
+                    if (index + 1) in [row - 1, row, row + 1]:
+                        lines.append({
+                            'row': index + 1,
+                            'parts': Line(index + 1, line).partition(annotations),
+                        })
+            matches.append({
+                "file": name,
+                "row": row,
+                "lines": lines,
+            })
     return JsonResponse({
         'term': term,
         'matches': matches,

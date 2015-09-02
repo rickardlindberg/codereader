@@ -149,9 +149,19 @@ var SearchResult = React.createClass({
     },
     render: function() {
         var matches = this.props.result.matches.map(function(match) {
+            var lines = match.lines.map(function(line) {
+                return <Line shouldScrollTo={false} line={line} />;
+            }.bind(this));
             return (
                 <li className="list-group-item">
-                    <LocationLink file={match.file} row={match.row} onLocationClicked={this.props.onLocationClicked} />
+                    <span className="list-group-item-text">
+                        <LocationLink file={match.file} row={match.row} onLocationClicked={this.props.onLocationClicked} />
+                    </span>
+                    <span className="list-group-item-text file-content">
+                        <pre>
+                            {lines}
+                        </pre>
+                    </span>
                 </li>
             );
         }.bind(this));
