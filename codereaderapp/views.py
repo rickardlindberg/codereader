@@ -5,7 +5,7 @@ from django.http import JsonResponse
 
 from codereaderapp.analyzers.syntax_highlight import get_annotations
 from codereaderapp.annotations import Annotations
-from codereaderapp.annotations import Line
+from codereaderapp.annotations import FileRenderer
 
 
 def index(request):
@@ -19,18 +19,7 @@ def file_list(request):
 
 
 def file(request, name):
-    lines = []
-    annotations = Annotations(get_annotations(name))
-    with open(name) as f:
-        for (index, line) in enumerate(f):
-            lines.append({
-                'row': index + 1,
-                'parts': Line(index + 1, line).partition(annotations),
-            })
-    return JsonResponse({
-        'name': name,
-        'lines': lines,
-    })
+    return JsonResponse(FileRenderer(name).render_file(Annotations(get_annotations(name))))
 
 
 def search(request, term):
@@ -42,7 +31,6 @@ def search(request, term):
             row = int(parts[1])
             column = int(parts[2])
             match = parts[3]
-            lines = []
             from codereaderapp.annotations import Annotation
             x = Annotation(
                     row,
@@ -53,18 +41,11 @@ def search(request, term):
                         "type": "style",
                         "what": "hll",
                     })
-            annotations = Annotations(get_annotations(name) + [x])
-            with open(name) as f:
-                for (index, line) in enumerate(f):
-                    if (index + 1) in [row - 1, row, row + 1]:
-                        lines.append({
-                            'row': index + 1,
-                            'parts': Line(index + 1, line).partition(annotations),
-                        })
+            annotations = Annotations([x])
             matches.append({
                 "file": name,
                 "row": row,
-                "lines": lines,
+                "lines": FileRenderer(name).render_lines(annotations, [row - 1, row, row + 1]),
             })
     return JsonResponse({
         'term': term,
