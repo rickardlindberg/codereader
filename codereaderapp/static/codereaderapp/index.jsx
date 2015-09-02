@@ -96,7 +96,7 @@ var File = React.createClass({
     },
     render: function() {
         var lines = this.props.file.lines.map(function(line) {
-            var shouldScrollTo = this.props.file.selectedRow === line.row;
+            var shouldScrollTo = this.props.file.selectedRow === line.row || (this.props.file.selectedRow === undefined && line.row === 1);
             return <Line shouldScrollTo={shouldScrollTo} line={line} />;
         }.bind(this));
         return (
