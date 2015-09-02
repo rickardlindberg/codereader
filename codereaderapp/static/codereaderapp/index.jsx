@@ -17,11 +17,16 @@ var FileView = React.createClass({
             return <File file={file} />
         });
         return (
-            <div className="span-24 last">
-                <div className="span-24 last">
-                    <LocationSearch onLocationSelected={this.onLocationSelected} />
-                </div>
-                <div className="span-24 last">
+            <div>
+                <nav className="navbar navbar-default navbar-fixed-top">
+                  <div className="container">
+                      <div className="navbar-header">
+                          <span className="navbar-brand">Code Reader</span>
+                      </div>
+                          <LocationSearch onLocationSelected={this.onLocationSelected} />
+                  </div>
+                </nav>
+                <div className="container">
                     {files}
                 </div>
             </div>
@@ -49,7 +54,15 @@ var LocationSearch = React.createClass({
             )
         }.bind(this));
         return (
-            <li>{links}</li>
+            <div className="dropdown navbar-btn">
+                <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Navigate
+                    <span className="caret"></span>
+                </button>
+                <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    {links}
+                </ul>
+            </div>
         );
     }
 });
@@ -79,8 +92,8 @@ var File = React.createClass({
             return <Line scrollTo={scrollTo} line={line} />;
         }.bind(this));
         return (
-            <div className="file">
-                <div className="fileHeader">
+            <div className="panel panel-default">
+                <div className="panel-heading">
                     <strong>{this.props.file.name}</strong>
                 </div>
                 <div className="fileBody code">
