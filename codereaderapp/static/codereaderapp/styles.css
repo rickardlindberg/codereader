@@ -73,6 +73,12 @@
     margin: 0px;
 }
 
+.search-result {
+    max-height: 340px;
+    overflow: auto;
+    padding: 0px;
+}
+
 body {
     padding-top: 70px;
 }

@@ -160,7 +160,7 @@ var SearchResult = React.createClass({
                 <div className="panel-heading">
                     <strong>Search results: {this.props.result.term}</strong>
                 </div>
-                <ul className="list-group">
+                <ul className="list-group search-result">
                     {matches}
                 </ul>
             </div>
