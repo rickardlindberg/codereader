@@ -1,9 +1,9 @@
 from unittest.mock import sentinel
 import unittest
 
-from codereaderlib import Annotation
-from codereaderlib import Annotations
-from codereaderlib import Line
+from codereaderlib.annotation import Annotation
+from codereaderlib.annotations import Annotations
+from codereaderlib.line import Line
 
 
 class TestLinePartition(unittest.TestCase):

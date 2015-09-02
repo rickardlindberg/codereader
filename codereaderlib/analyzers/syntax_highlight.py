@@ -5,7 +5,7 @@ from pygments.lexers import TextLexer
 from pygments.token import STANDARD_TYPES
 from pygments.token import Token
 
-from codereaderapp.annotations import Annotation
+from codereaderlib.annotation import Annotation
 
 
 def get_annotations(name):

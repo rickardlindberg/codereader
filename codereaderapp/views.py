@@ -4,8 +4,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 from codereaderlib.analyzers.syntax_highlight import get_annotations
-from codereaderlib import Annotations
-from codereaderlib import FileRenderer
+from codereaderlib.annotation import Annotation
+from codereaderlib.annotations import Annotations
+from codereaderlib.file import File
 
 
 def index(request):
@@ -19,7 +20,7 @@ def file_list(request):
 
 
 def file(request, name):
-    return JsonResponse(FileRenderer(name).render_file(Annotations(get_annotations(name))))
+    return JsonResponse(File(name).render_file(Annotations(get_annotations(name))))
 
 
 def search(request, term):
@@ -31,7 +32,6 @@ def search(request, term):
             row = int(parts[1])
             column = int(parts[2])
             match = parts[3]
-            from codereaderapp.annotations import Annotation
             x = Annotation(
                     row,
                     column,
@@ -45,7 +45,7 @@ def search(request, term):
             matches.append({
                 "file": name,
                 "row": row,
-                "lines": FileRenderer(name).render_lines(annotations, [row - 1, row, row + 1]),
+                "lines": File(name).render_lines(annotations, [row - 1, row, row + 1]),
             })
     return JsonResponse({
         'term': term,
