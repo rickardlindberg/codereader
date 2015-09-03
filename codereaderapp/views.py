@@ -1,3 +1,4 @@
+import os.path
 import subprocess
 
 from django.shortcuts import render
@@ -10,22 +11,25 @@ from codereaderlib.file import File
 from codereaderlib.files import list_files
 
 
+REPO_ROOT = "."
+
+
 def index(request):
     return render(request, 'codereaderapp/index.html')
 
 
 def file_list(request):
     return JsonResponse({
-        'files': list_files(),
+        'files': list_files(REPO_ROOT),
     })
 
 
 def file(request, name):
-    return JsonResponse(File(name).render_file(Annotations(get_annotations(name))))
+    return JsonResponse(File(REPO_ROOT, name).render_file(Annotations(get_annotations(os.path.join(REPO_ROOT, name)))))
 
 
 def do_search(term):
-    ack_result = subprocess.check_output(["ack", "--column", "--output", "$&", term])
+    ack_result = subprocess.check_output(["ack", "--column", "--output", "$&", term], cwd=REPO_ROOT)
     for ack_line in ack_result.decode("utf-8").strip().split("\n"):
         parts = ack_line.split(":", 4)
         if len(parts) == 4:
@@ -55,7 +59,7 @@ def search(request, term):
         matches.append({
             "file": name,
             "row": row,
-            "lines": File(name).render_lines(Annotations([annotation]), [row-1, row, row+1]),
+            "lines": File(REPO_ROOT, name).render_lines(Annotations([annotation]), [row-1, row, row+1]),
         })
     return JsonResponse({
         'term': term,
