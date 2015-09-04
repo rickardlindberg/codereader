@@ -1,5 +1,6 @@
 import subprocess
 
+from codereaderlib.file import File
 from codereaderlib.search import SearchResult
 
 
@@ -21,3 +22,9 @@ class Repo(object):
                 result.add(name, row, column, column-1+len(match))
         return result
 
+    def list_files(self):
+        ack_output = subprocess.check_output(["ack", "-f"], cwd=self._root)
+        return ack_output.decode("utf-8").strip().split("\n")
+
+    def get_file(self, name):
+        return File(self._root, name)

@@ -4,10 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 from codereaderlib.analyzers.syntax_highlight import get_annotations
-from codereaderlib.annotation import Annotation
 from codereaderlib.annotations import Annotations
-from codereaderlib.file import File
-from codereaderlib.files import list_files
 from codereaderlib.repo import Repo
 
 
@@ -20,12 +17,12 @@ def index(request):
 
 def file_list(request):
     return JsonResponse({
-        'files': list_files(REPO_ROOT),
+        'files': Repo(REPO_ROOT).list_files(),
     })
 
 
 def file(request, name):
-    return JsonResponse(File(REPO_ROOT, name).render_file(Annotations(get_annotations(os.path.join(REPO_ROOT, name)))))
+    return JsonResponse(Repo(REPO_ROOT).get_file(name).render_file(Annotations(get_annotations(os.path.join(REPO_ROOT, name)))))
 
 
 def search(request, term):
