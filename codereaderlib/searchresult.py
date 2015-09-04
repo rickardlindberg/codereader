@@ -35,4 +35,3 @@ class SearchResult(object):
             'term': self._term,
             'matches': matches,
         }
-

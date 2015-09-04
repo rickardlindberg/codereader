@@ -1,7 +1,8 @@
 import subprocess
 
 from codereaderlib.file import File
-from codereaderlib.search import SearchResult
+from codereaderlib.filelist import FileList
+from codereaderlib.searchresult import SearchResult
 
 
 class Repo(object):
@@ -28,14 +29,3 @@ class Repo(object):
 
     def get_file(self, name):
         return File(self._root, name)
-
-
-class FileList(object):
-
-    def __init__(self, files):
-        self._files = files
-
-    def render(self):
-        return {
-            'files': self._files,
-        }
