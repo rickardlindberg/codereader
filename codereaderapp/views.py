@@ -16,9 +16,7 @@ def index(request):
 
 
 def file_list(request):
-    return JsonResponse({
-        'files': Repo(REPO_ROOT).list_files(),
-    })
+    return JsonResponse(Repo(REPO_ROOT).get_file_list().render())
 
 
 def file(request, name):
