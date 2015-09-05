@@ -10,9 +10,12 @@ class Repo(object):
     def __init__(self, root):
         self._root = root
 
-    def search(self, term):
+    def search(self, term, limit=None):
         result = SearchResult(self._root, term)
-        ack_result = subprocess.check_output(["ack", "--column", "--output", "$&", term], cwd=self._root)
+        cmd = ["ack", "-H", "--column", "--output", "$&", term]
+        if limit is not None:
+            cmd.append(limit)
+        ack_result = subprocess.check_output(cmd, cwd=self._root)
         for ack_line in ack_result.decode("utf-8").strip().split("\n"):
             parts = ack_line.split(":", 4)
             if len(parts) == 4:

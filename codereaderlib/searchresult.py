@@ -35,3 +35,21 @@ class SearchResult(object):
             'term': self._term,
             'matches': matches,
         }
+
+    def get_annotations(self):
+        annotations_by_name = {}
+        for (name, row, start_column, end_column) in self._results:
+            annotation = Annotation(
+                row,
+                start_column,
+                row,
+                end_column,
+                {
+                    "type": "style",
+                    "what": "hll",
+                }
+            )
+            if name not in annotations_by_name:
+                annotations_by_name[name] = []
+            annotations_by_name[name].append(annotation)
+        return annotations_by_name

@@ -10,7 +10,11 @@ var CodeReader = React.createClass({
         });
     },
     onLocationClicked: function(location) {
-        $.get('/file/', {name: location.file}, function(result) {
+        var params = {
+            name: location.file,
+            highlight: location.highlight
+        };
+        $.get('/file/', params, function(result) {
             result.selectedRow = location.row;
             this.addElement({type: "file", value: result});
         }.bind(this));
@@ -155,7 +159,7 @@ var SearchResult = React.createClass({
             return (
                 <li className="list-group-item">
                     <span className="list-group-item-text">
-                        <LocationLink file={match.file} row={match.row} onLocationClicked={this.props.onLocationClicked} />
+                        <LocationLink file={match.file} row={match.row} highlight={this.props.result.term} onLocationClicked={this.props.onLocationClicked} />
                     </span>
                     <span className="list-group-item-text file-content">
                         <pre>
@@ -183,7 +187,8 @@ var LocationLink = React.createClass({
         event.preventDefault();
         this.props.onLocationClicked({
             file: this.props.file,
-            row: this.props.row
+            row: this.props.row,
+            highlight: this.props.highlight
         });
     },
     render: function() {

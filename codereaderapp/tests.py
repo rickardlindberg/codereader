@@ -31,6 +31,15 @@ class TestCodeReaderApp(TestCase):
         self.assertEqual(json_response["name"], "README")
         self.assertEqual(len(json_response["lines"]), 5)
 
+    def test_file_highlight(self):
+        json_response = self.get_json("/file/?name=README&highlight=5")
+        self.assertEqual(json_response["name"], "README")
+        self.assertEqual(json_response["lines"][4]["parts"], [
+            {"text": "line ", "annotations": []},
+            {"text": "5",     "annotations": [{"type": "style", "what": "hll"}]},
+            {"text": "\n",    "annotations": []},
+        ])
+
     def test_search(self):
         json_response = self.get_json("/search/4")
         self.assertEqual(json_response["term"], "4")
