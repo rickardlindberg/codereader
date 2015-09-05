@@ -33,11 +33,11 @@ def _get_annotations(root, name, highlight):
     return Annotations(
         get_annotations(os.path.join(root, name))
         +
-        _get_highligh_annotations(root, name, highlight)
+        _get_highlight_annotations(root, name, highlight)
     )
 
 
-def _get_highligh_annotations(root, name, highlight):
+def _get_highlight_annotations(root, name, highlight):
     if len(highlight.strip()) > 0:
         return Repo(root).search(highlight, name).get_annotations(name)
     return []
