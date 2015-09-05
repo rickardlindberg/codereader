@@ -14,32 +14,22 @@ class SearchResult(object):
         self._results.append((name, row, start_column, end_column))
 
     def render(self):
-        matches = []
-        for (name, row, start_column, end_column) in self._results:
-            annotation = Annotation(
-                row,
-                start_column,
-                row,
-                end_column,
-                {
-                    "type": "style",
-                    "what": "hll",
-                }
-            )
-            matches.append({
-                "file": name,
-                "row": row,
-                "lines": File(self._root, name).render_lines(Annotations([annotation]), [row-1, row, row+1]),
-            })
         return {
             'term': self._term,
-            'matches': matches,
+            'matches': [
+                {
+                    "file": name,
+                    "row": row,
+                    "lines": File(self._root, name).render_lines(Annotations(self.get_annotations(name)), [row-1, row, row+1]),
+                }
+                for (name, row, start_column, end_column)
+                in self._results
+            ],
         }
 
-    def get_annotations(self):
-        annotations_by_name = {}
-        for (name, row, start_column, end_column) in self._results:
-            annotation = Annotation(
+    def get_annotations(self, for_name):
+        return [
+            Annotation(
                 row,
                 start_column,
                 row,
@@ -49,7 +39,7 @@ class SearchResult(object):
                     "what": "hll",
                 }
             )
-            if name not in annotations_by_name:
-                annotations_by_name[name] = []
-            annotations_by_name[name].append(annotation)
-        return annotations_by_name
+            for (name, row, start_column, end_column)
+            in self._results
+            if name == for_name
+        ]

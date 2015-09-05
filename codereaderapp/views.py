@@ -24,7 +24,7 @@ def file(request):
     highlight = request.GET.get("highlight", "")
     x = []
     if len(highlight.strip()) > 0:
-        x = Repo(REPO_ROOT).search(highlight, name).get_annotations().get(name, [])
+        x = Repo(REPO_ROOT).search(highlight, name).get_annotations(name)
     annotations = Annotations(
         get_annotations(os.path.join(REPO_ROOT, name))
         +
