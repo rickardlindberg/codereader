@@ -19,7 +19,8 @@ def file_list(request):
     return JsonResponse(Repo(REPO_ROOT).get_file_list().render())
 
 
-def file(request, name):
+def file(request):
+    name = request.GET.get("name")
     return JsonResponse(Repo(REPO_ROOT).get_file(name).render_file(Annotations(get_annotations(os.path.join(REPO_ROOT, name)))))
 
 

@@ -10,7 +10,7 @@ var CodeReader = React.createClass({
         });
     },
     onLocationClicked: function(location) {
-        $.get('/file/' + location.file, function(result) {
+        $.get('/file/', {name: location.file}, function(result) {
             result.selectedRow = location.row;
             this.addElement({type: "file", value: result});
         }.bind(this));

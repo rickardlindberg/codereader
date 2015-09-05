@@ -27,7 +27,7 @@ class TestCodeReaderApp(TestCase):
         self.assertEqual(json_response["files"], ["README"])
 
     def test_file(self):
-        json_response = self.get_json("/file/README")
+        json_response = self.get_json("/file/?name=README")
         self.assertEqual(json_response["name"], "README")
         self.assertEqual(len(json_response["lines"]), 5)
 
