@@ -9,7 +9,7 @@ var CodeReader = React.createClass({
             elements: this.state.elements.concat([element])
         });
     },
-    onLocationClicked: function(location) {
+    handleLocationClick: function(location) {
         var params = {
             name: location.file,
             highlight: location.highlight
@@ -30,7 +30,7 @@ var CodeReader = React.createClass({
         if (element.type === "file") {
             return <File file={element.value} />;
         } else if (element.type === "search_result") {
-            return <SearchResult onLocationClicked={this.onLocationClicked} result={element.value} />;
+            return <SearchResult handleLocationClick={this.handleLocationClick} result={element.value} />;
         } else {
             return <span>{element.value}</span>;
         }
@@ -47,7 +47,7 @@ var CodeReader = React.createClass({
                           <ul className="nav navbar-nav">
                               <li className="dropdown">
                                   <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Files <span className="caret"></span></a>
-                                  <FileMenu onLocationClicked={this.onLocationClicked} />
+                                  <FileMenu handleLocationClick={this.handleLocationClick} />
                               </li>
                           </ul>
                           <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSearchSubmit}>
@@ -82,7 +82,7 @@ var FileMenu = React.createClass({
         var links = this.state.files.map(function(file) {
             return (
                 <li>
-                    <LocationLink file={file} onLocationClicked={this.props.onLocationClicked} />
+                    <LocationLink file={file} handleLocationClick={this.props.handleLocationClick} />
                 </li>
             )
         }.bind(this));
@@ -159,7 +159,7 @@ var SearchResult = React.createClass({
             return (
                 <li className="list-group-item">
                     <span className="list-group-item-text">
-                        <LocationLink file={match.file} row={match.row} highlight={this.props.result.term} onLocationClicked={this.props.onLocationClicked} />
+                        <LocationLink file={match.file} row={match.row} highlight={this.props.result.term} handleLocationClick={this.props.handleLocationClick} />
                     </span>
                     <span className="list-group-item-text file-content">
                         <pre>
@@ -183,17 +183,28 @@ var SearchResult = React.createClass({
 });
 
 var LocationLink = React.createClass({
-    handleClick: function(event) {
-        event.preventDefault();
-        this.props.onLocationClicked({
+    render: function() {
+        var clickData = {
             file: this.props.file,
             row: this.props.row,
             highlight: this.props.highlight
-        });
+        };
+        return (
+            <Link handleClick={this.props.handleLocationClick}
+                  text={this.props.file}
+                  clickData={clickData} />
+        );
+    }
+});
+
+var Link = React.createClass({
+    handleClick: function(event) {
+        event.preventDefault();
+        this.props.handleClick(this.props.clickData);
     },
     render: function() {
         return (
-            <a href="#" onClick={this.handleClick}>{this.props.file}</a>
+            <a href="#" onClick={this.handleClick}>{this.props.text}</a>
         );
     }
 });
