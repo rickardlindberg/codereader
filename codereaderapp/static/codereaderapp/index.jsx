@@ -60,8 +60,83 @@ var CodeReader = React.createClass({
                   </div>
                 </nav>
                 <div className="container">
+                    <FileBrowser handleLocationClick={this.handleLocationClick} />
                     {this.state.elements.map(this.renderElement)}
                 </div>
+            </div>
+        );
+    }
+});
+
+var FileBrowser = React.createClass({
+    getInitialState: function() {
+        return {
+            path: [],
+            items: []
+        };
+    },
+    componentDidMount: function() {
+        this.loadDirectory(".");
+    },
+    handleDirectoryClick: function(item) {
+        this.loadDirectory(item.value);
+    },
+    loadDirectory: function(directory) {
+        $.get('/directory/', {directory: directory}, function(result) {
+            this.setState(result);
+        }.bind(this));
+    },
+    render: function() {
+        var items = this.state.items.map(function(item) {
+            if (item.type === "directory") {
+                return (
+                    <li className="list-group-item">
+                        <span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+                        <Link
+                            text={item.text}
+                            handleClick={this.handleDirectoryClick}
+                            clickData={item}
+                        />
+                    </li>
+                );
+            } else if (item.type === "file") {
+                return (
+                    <li className="list-group-item">
+                        <span className="glyphicon glyphicon-file" aria-hidden="true"></span>
+                        <Link
+                            text={item.text}
+                            handleClick={this.props.handleLocationClick}
+                            clickData={{
+                                file: item.value,
+                                row: 0,
+                                highlight: ""
+                            }}
+                        />
+                    </li>
+                );
+            }
+        }.bind(this));
+        var pathItems = this.state.path.map(function(item) {
+            return (
+                <li>
+                    <Link
+                        text={item.text}
+                        handleClick={this.handleDirectoryClick}
+                        clickData={item}
+                    />
+                </li>
+            );
+        }.bind(this));
+        return (
+            <div className="panel panel-default">
+                <div className="panel-heading">
+                    <ol className="breadcrumb breadcrumb-header">
+                        {pathItems}
+                    </ol>
+                </div>
+                <ul className="list-group">
+                    {items}
+                </ul>
             </div>
         );
     }
@@ -184,15 +259,16 @@ var SearchResult = React.createClass({
 
 var LocationLink = React.createClass({
     render: function() {
-        var clickData = {
-            file: this.props.file,
-            row: this.props.row,
-            highlight: this.props.highlight
-        };
         return (
-            <Link handleClick={this.props.handleLocationClick}
-                  text={this.props.file}
-                  clickData={clickData} />
+            <Link
+                handleClick={this.props.handleLocationClick}
+                text={this.props.file}
+                clickData={{
+                    file: this.props.file,
+                    row: this.props.row,
+                    highlight: this.props.highlight
+                }}
+            />
         );
     }
 });
