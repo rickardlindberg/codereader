@@ -10,14 +10,7 @@ var CodeReader = React.createClass({
         });
     },
     handleLocationClick: function(location) {
-        var params = {
-            name: location.file,
-            highlight: location.highlight
-        };
-        $.get('/file/', params, function(result) {
-            result.selectedRow = location.row;
-            this.addElement({type: "file", value: result});
-        }.bind(this));
+        this.addElement({type: "file", name: location.file, highlight: location.highlight});
     },
     handleSearchSubmit: function(event) {
         event.preventDefault();
@@ -28,7 +21,7 @@ var CodeReader = React.createClass({
     },
     renderElement: function(element) {
         if (element.type === "file") {
-            return <File file={element.value} />;
+            return <File name={element.name} highlight={element.highlight} />;
         } else if (element.type === "search_result") {
             return <SearchResult handleLocationClick={this.handleLocationClick} result={element.value} />;
         } else {
@@ -170,26 +163,54 @@ var FileMenu = React.createClass({
 });
 
 var File = React.createClass({
+    getInitialState: function() {
+        return {
+        };
+    },
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return ((nextProps.name !== this.props.name) || (nextState.lines !== this.state.lines));
+    },
     componentDidMount: function() {
+        var params = {
+            name: this.props.name,
+            highlight: this.props.highlight
+        };
+        $.get('/file/', params, function(result) {
+            result.selectedRow = location.row;
+            this.setState(result);
+        }.bind(this));
         this.getDOMNode().scrollIntoView();
     },
     render: function() {
-        var lines = this.props.file.lines.map(function(line) {
-            var shouldScrollTo = this.props.file.selectedRow === line.row || (this.props.file.selectedRow === undefined && line.row === 1);
-            return <Line shouldScrollTo={shouldScrollTo} line={line} />;
-        }.bind(this));
         return (
             <div className="panel panel-default">
                 <div className="panel-heading">
-                    <strong>{this.props.file.name}</strong>
+                    <strong>{this.props.name}</strong>
                 </div>
+                {this.renderBody()}
+            </div>
+        );
+    },
+    renderBody: function() {
+        if (this.state.lines) {
+            var lines = this.state.lines.map(function(line) {
+                var shouldScrollTo = this.state.selectedRow === line.row || (this.state.selectedRow === undefined && line.row === 1);
+                return <Line shouldScrollTo={shouldScrollTo} line={line} key={line.row} />;
+            }.bind(this));
+            return (
                 <div className="panel-body file-content">
                     <pre>
                         {lines}
                     </pre>
                 </div>
-            </div>
-        );
+            );
+        } else {
+            return (
+                <div className="panel-body">
+                    <span>Loading...</span>
+                </div>
+            );
+        }
     }
 });
 
