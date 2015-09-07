@@ -6,11 +6,12 @@ from django.http import JsonResponse
 from codereaderlib.analyzers.syntax_highlight import get_annotations
 from codereaderlib.annotations import Annotations
 from codereaderlib.repo import Repo
+from codereader.settings import USE_PROD_JS_CSS
 from codereader.settings import REPO_ROOT
 
 
 def index(request):
-    return render(request, 'codereaderapp/index.html')
+    return render(request, 'codereaderapp/index.html', {"USE_PROD_JS_CSS": USE_PROD_JS_CSS})
 
 
 def file_list(request):

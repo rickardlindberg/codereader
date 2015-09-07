@@ -6,6 +6,8 @@ SECRET_KEY = 'change-this-to-something-private'
 
 DEBUG = True
 
+USE_PROD_JS_CSS = False
+
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
