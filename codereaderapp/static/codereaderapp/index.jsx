@@ -285,7 +285,9 @@ var Link = React.createClass({
     }
 });
 
-React.render(
-    <CodeReader />,
-    document.getElementById('content')
-);
+$(function() {
+    React.render(
+        <CodeReader />,
+        document.getElementById('content')
+    );
+});
