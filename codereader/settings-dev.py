@@ -2,7 +2,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 SECRET_KEY = 'change-this-to-something-private'
 
 DEBUG = True
@@ -71,3 +70,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = 'static'
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

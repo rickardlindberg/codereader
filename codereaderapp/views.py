@@ -6,9 +6,7 @@ from django.http import JsonResponse
 from codereaderlib.analyzers.syntax_highlight import get_annotations
 from codereaderlib.annotations import Annotations
 from codereaderlib.repo import Repo
-
-
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+from codereader.settings import REPO_ROOT
 
 
 def index(request):
