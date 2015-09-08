@@ -14,10 +14,6 @@ def index(request):
     return render(request, 'codereaderapp/index.html', {"USE_PROD_JS_CSS": USE_PROD_JS_CSS})
 
 
-def file_list(request):
-    return JsonResponse(Repo(REPO_ROOT).get_file_list().render())
-
-
 def file(request):
     name = request.GET.get("name")
     highlight = request.GET.get("highlight", "")

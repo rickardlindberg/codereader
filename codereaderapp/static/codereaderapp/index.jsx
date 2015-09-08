@@ -32,25 +32,19 @@ var CodeReader = React.createClass({
         return (
             <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
-                  <div className="container">
-                      <div className="navbar-header">
-                          <span className="navbar-brand">Code Reader</span>
-                      </div>
-                      <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                          <ul className="nav navbar-nav">
-                              <li className="dropdown">
-                                  <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Files <span className="caret"></span></a>
-                                  <FileMenu handleLocationClick={this.handleLocationClick} />
-                              </li>
-                          </ul>
-                          <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSearchSubmit}>
-                              <div className="form-group">
-                                  <input type="text" className="form-control" placeholder="Search" ref="search" />
-                              </div>
-                              <button type="submit" className="btn btn-default">Find</button>
-                          </form>
-                      </div>
-                  </div>
+                    <div className="container">
+                        <div className="navbar-header">
+                            <span className="navbar-brand">Code Reader</span>
+                        </div>
+                        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSearchSubmit}>
+                                <div className="form-group">
+                                    <input type="text" className="form-control" placeholder="Search" ref="search" />
+                                </div>
+                                <button type="submit" className="btn btn-default">Find</button>
+                            </form>
+                        </div>
+                    </div>
                 </nav>
                 <div className="container">
                     <FileBrowser handleLocationClick={this.handleLocationClick} />
@@ -131,33 +125,6 @@ var FileBrowser = React.createClass({
                     {items}
                 </ul>
             </div>
-        );
-    }
-});
-
-var FileMenu = React.createClass({
-    getInitialState: function() {
-        return {
-            files: []
-        };
-    },
-    componentDidMount: function() {
-        $.get('/file_list', function(result) {
-            this.setState(result);
-        }.bind(this));
-    },
-    render: function() {
-        var links = this.state.files.map(function(file) {
-            return (
-                <li>
-                    <LocationLink file={file} handleLocationClick={this.props.handleLocationClick} />
-                </li>
-            )
-        }.bind(this));
-        return (
-            <ul className="dropdown-menu">
-                {links}
-            </ul>
         );
     }
 });

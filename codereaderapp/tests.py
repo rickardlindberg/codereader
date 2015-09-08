@@ -22,10 +22,6 @@ class TestCodeReaderApp(TestCase):
         response = self.client.get("/")
         self.assertContains(response, "<title>Code Reader</title>")
 
-    def test_file_list(self):
-        json_response = self.get_json("/file_list")
-        self.assertEqual(json_response["files"], ["README"])
-
     def test_file(self):
         json_response = self.get_json("/file/?name=README")
         self.assertEqual(json_response["name"], "README")

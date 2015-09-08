@@ -26,9 +26,5 @@ class Repo(object):
                 result.add(name, row, column, column-1+len(match))
         return result
 
-    def get_file_list(self):
-        ack_output = subprocess.check_output(["ack", "-f"], cwd=self._root)
-        return FileList(ack_output.decode("utf-8").strip().split("\n"))
-
     def get_file(self, name):
         return File(self._root, name)
