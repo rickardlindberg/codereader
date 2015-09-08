@@ -86,42 +86,12 @@ var FileBrowser = React.createClass({
         }.bind(this));
     },
     render: function() {
-        var items = this.state.items.map(function(item) {
-            if (item.type === "directory") {
-                return (
-                    <li className="list-group-item">
-                        <span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
-                        <Link handleClick={this.handleDirectoryClick}
-                              clickData={item}>
-                            {item.text}
-                        </Link>
-                    </li>
-                );
-            } else if (item.type === "file") {
-                var clickData = {
-                    file: item.value,
-                    row: 0,
-                    highlight: ""
-                };
-                return (
-                    <li className="list-group-item">
-                        <span className="glyphicon glyphicon-file" aria-hidden="true"></span>
-                        <Link handleClick={this.props.handleLocationClick}
-                              clickData={clickData}>
-                            {item.text}
-                        </Link>
-                    </li>
-                );
-            }
-        }.bind(this));
         return (
             <div className="panel panel-default">
                 <div className="panel-heading">
                     {this.renderBreadcrumb()}
                 </div>
-                <ul className="list-group">
-                    {items}
-                </ul>
+                {this.renderList()}
             </div>
         );
     },
@@ -157,6 +127,45 @@ var FileBrowser = React.createClass({
             <ol className="breadcrumb breadcrumb-header">
                 {items}
             </ol>
+        );
+    },
+    renderList: function() {
+        var items = this.state.items.map(function(item) {
+            if (item.type === "directory") {
+                return (
+                    <li className="list-group-item">
+                        <span className="glyphicon glyphicon-folder-close"
+                              aria-hidden="true" />
+                        {" "}
+                        <Link handleClick={this.handleDirectoryClick}
+                              clickData={item}>
+                            {item.text}
+                        </Link>
+                    </li>
+                );
+            } else if (item.type === "file") {
+                var clickData = {
+                    file: item.value,
+                    row: 0,
+                    highlight: ""
+                };
+                return (
+                    <li className="list-group-item">
+                        <span className="glyphicon glyphicon-file"
+                              aria-hidden="true" />
+                        {" "}
+                        <Link handleClick={this.props.handleLocationClick}
+                              clickData={clickData}>
+                            {item.text}
+                        </Link>
+                    </li>
+                );
+            }
+        }.bind(this));
+        return (
+            <ul className="list-group">
+                {items}
+            </ul>
         );
     }
 });
