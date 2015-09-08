@@ -47,8 +47,14 @@ var CodeReader = React.createClass({
                     </div>
                 </nav>
                 <div className="container">
-                    <FileBrowser handleLocationClick={this.handleLocationClick} />
-                    {this.state.elements.map(this.renderElement)}
+                    <div className="row">
+                        <div className="col-md-3">
+                            <FileBrowser handleLocationClick={this.handleLocationClick} />
+                        </div>
+                        <div className="col-md-9">
+                            {this.state.elements.map(this.renderElement)}
+                        </div>
+                    </div>
                 </div>
             </div>
         );
