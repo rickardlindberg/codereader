@@ -91,52 +91,72 @@ var FileBrowser = React.createClass({
                 return (
                     <li className="list-group-item">
                         <span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
-                        <Link
-                            text={item.text}
-                            handleClick={this.handleDirectoryClick}
-                            clickData={item}
-                        />
+                        <Link handleClick={this.handleDirectoryClick}
+                              clickData={item}>
+                            {item.text}
+                        </Link>
                     </li>
                 );
             } else if (item.type === "file") {
+                var clickData = {
+                    file: item.value,
+                    row: 0,
+                    highlight: ""
+                };
                 return (
                     <li className="list-group-item">
                         <span className="glyphicon glyphicon-file" aria-hidden="true"></span>
-                        <Link
-                            text={item.text}
-                            handleClick={this.props.handleLocationClick}
-                            clickData={{
-                                file: item.value,
-                                row: 0,
-                                highlight: ""
-                            }}
-                        />
+                        <Link handleClick={this.props.handleLocationClick}
+                              clickData={clickData}>
+                            {item.text}
+                        </Link>
                     </li>
                 );
             }
         }.bind(this));
-        var pathItems = this.state.path.map(function(item) {
-            return (
-                <li>
-                    <Link
-                        text={item.text}
-                        handleClick={this.handleDirectoryClick}
-                        clickData={item}
-                    />
-                </li>
-            );
-        }.bind(this));
         return (
             <div className="panel panel-default">
                 <div className="panel-heading">
-                    <ol className="breadcrumb breadcrumb-header">
-                        {pathItems}
-                    </ol>
+                    {this.renderBreadcrumb()}
                 </div>
                 <ul className="list-group">
                     {items}
                 </ul>
             </div>
+        );
+    },
+    renderBreadcrumb: function() {
+        var items = this.state.path.map(function(item, index) {
+            if (index === 0) {
+                var text = (
+                    <span className="glyphicon glyphicon-home"
+                          aria-hidden="true" />
+                );
+            } else {
+                var text = item.text;
+            }
+            if (index === (this.state.path.length - 1)) {
+                var activeClass = "active";
+                var body = text;
+            } else {
+                var body = (
+                    <Link text={item.text}
+                          handleClick={this.handleDirectoryClick}
+                          clickData={item}>
+                        {text}
+                    </Link>
+                );
+            }
+            return (
+                <li className={activeClass}>
+                    {body}
+                </li>
+            );
+        }.bind(this));
+        return (
+            <ol className="breadcrumb breadcrumb-header">
+                {items}
+            </ol>
         );
     }
 });
@@ -259,16 +279,16 @@ var SearchResult = React.createClass({
 
 var LocationLink = React.createClass({
     render: function() {
+        var clickData = {
+            file: this.props.file,
+            row: this.props.row,
+            highlight: this.props.highlight
+        };
         return (
-            <Link
-                handleClick={this.props.handleLocationClick}
-                text={this.props.file}
-                clickData={{
-                    file: this.props.file,
-                    row: this.props.row,
-                    highlight: this.props.highlight
-                }}
-            />
+            <Link handleClick={this.props.handleLocationClick}
+                  clickData={clickData}>
+                {this.props.file}
+            </Link>
         );
     }
 });
@@ -280,7 +300,7 @@ var Link = React.createClass({
     },
     render: function() {
         return (
-            <a href="#" onClick={this.handleClick}>{this.props.text}</a>
+            <a href="#" onClick={this.handleClick}>{this.props.children}</a>
         );
     }
 });
