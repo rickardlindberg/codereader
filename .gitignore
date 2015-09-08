@@ -3,5 +3,6 @@ __pycache__
 /db.sqlite3
 /tags
 /codereader/settings.py
+/codereaderapp/static/codereaderapp/index.js
 /static
 *.pyc

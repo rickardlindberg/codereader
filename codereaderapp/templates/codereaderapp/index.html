@@ -28,13 +28,17 @@
 
     {% if USE_PROD_JS_CSS %}
       <script src="{% static 'codereaderapp/react-0.13.3/react.min.js' %}"></script>
-      <script src="{% static 'codereaderapp/react-0.13.3/JSXTransformer.js' %}"></script>
     {% else %}
       <script src="{% static 'codereaderapp/react-0.13.3/react.js' %}"></script>
       <script src="{% static 'codereaderapp/react-0.13.3/JSXTransformer.js' %}"></script>
     {% endif %}
 
-    <script src="{% static 'codereaderapp/index.jsx' %}" type="text/jsx"></script>
+    {% if USE_PROD_JS_CSS %}
+      <script src="{% static 'codereaderapp/index.js' %}"></script>
+    {% else %}
+      <script src="{% static 'codereaderapp/index.jsx' %}" type="text/jsx"></script>
+    {% endif %}
+
     <link rel="stylesheet" href="{% static 'codereaderapp/styles.css' %}" type="text/css" media="screen, projection">
   </head>
   <body>
