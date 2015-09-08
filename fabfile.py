@@ -14,6 +14,7 @@ def deploy(project_root):
         run("python3 manage.py migrate")
         run("python3 manage.py test")
 
+
 def test():
     transformjsx()
     local("python3 manage.py test")
