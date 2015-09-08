@@ -34,9 +34,15 @@ var CodeReader = React.createClass({
                 <nav className="navbar navbar-default navbar-fixed-top">
                     <div className="container">
                         <div className="navbar-header">
-                            <span className="navbar-brand">Code Reader</span>
+                            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                                <span className="sr-only">Toggle navigation</span>
+                                <span className="icon-bar"></span>
+                                <span className="icon-bar"></span>
+                                <span className="icon-bar"></span>
+                            </button>
+                            <a className="navbar-brand" href="/">Code Reader</a>
                         </div>
-                        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <div id="navbar" className="collapse navbar-collapse">
                             <form className="navbar-form navbar-left" role="search" onSubmit={this.handleSearchSubmit}>
                                 <div className="form-group">
                                     <input type="text" className="form-control" placeholder="Search" ref="search" />
