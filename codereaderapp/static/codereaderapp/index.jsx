@@ -1,29 +1,29 @@
 var CodeReader = React.createClass({
     getInitialState: function() {
         return {
-            elements: []
+            elements: [],
+            counter: 0
         };
     },
     addElement: function(element) {
         this.setState({
-            elements: this.state.elements.concat([element])
+            elements: this.state.elements.concat([element]),
+            counter: this.state.counter + 1
         });
     },
     handleLocationClick: function(location) {
-        this.addElement({type: "file", name: location.file, highlight: location.highlight});
+        this.addElement({counter: this.state.counter, type: "file", name: location.file, highlight: location.highlight});
     },
     handleSearchSubmit: function(event) {
         event.preventDefault();
         var term = React.findDOMNode(this.refs.search).value.trim();
-        this.addElement({type: "search_result", term: term});
+        this.addElement({counter: this.state.counter, type: "search_result", term: term});
     },
     renderElement: function(element) {
         if (element.type === "file") {
-            return <File name={element.name} highlight={element.highlight} />;
+            return <File name={element.name} highlight={element.highlight} key={element.counter} />;
         } else if (element.type === "search_result") {
-            return <SearchResult handleLocationClick={this.handleLocationClick} term={element.term} />;
-        } else {
-            return <span>{element.value}</span>;
+            return <SearchResult handleLocationClick={this.handleLocationClick} term={element.term} key={element.counter} />;
         }
     },
     render: function() {
@@ -116,7 +116,7 @@ var FileBrowser = React.createClass({
                 );
             }
             return (
-                <li className={activeClass}>
+                <li className={activeClass} key={item.value}>
                     {body}
                 </li>
             );
@@ -131,7 +131,7 @@ var FileBrowser = React.createClass({
         var items = this.state.items.map(function(item) {
             if (item.type === "directory") {
                 return (
-                    <li className="list-group-item">
+                    <li className="list-group-item" key={item.value}>
                         <span className="glyphicon glyphicon-folder-close"
                               aria-hidden="true" />
                         {" "}
@@ -148,7 +148,7 @@ var FileBrowser = React.createClass({
                     highlight: ""
                 };
                 return (
-                    <li className="list-group-item">
+                    <li className="list-group-item" key={item.value}>
                         <span className="glyphicon glyphicon-file"
                               aria-hidden="true" />
                         {" "}
@@ -221,7 +221,7 @@ var Lines = React.createClass({
         this.props.lines.map(function(line) {
             if (expectedRow !== undefined && expectedRow !== line.row) {
                 lines.push(
-                    <tr>
+                    <tr key={expectedRow}>
                         <td className="line-row">
                             <code>...</code>
                         </td>
@@ -265,7 +265,7 @@ var Line = React.createClass({
             </tr>
         );
     },
-    renderPart: function(part) {
+    renderPart: function(part, index) {
         var classes = part.annotations.map(function(annotation) {
             if (annotation.type === "style") {
                 return annotation.what;
@@ -273,7 +273,7 @@ var Line = React.createClass({
             return "";
         }).join(" ");
         return (
-            <span className={classes}>
+            <span className={classes} key={index}>
                 {part.text}
             </span>
         );
@@ -322,9 +322,9 @@ var SearchResult = React.createClass({
             </ul>
         );
     },
-    renderMatchItem: function(match) {
+    renderMatchItem: function(match, index) {
         return (
-            <li className="list-group-item">
+            <li className="list-group-item" key={index}>
                 <span className="list-group-item-text">
                     <LocationLink file={match.file}
                                   row={match.row}
