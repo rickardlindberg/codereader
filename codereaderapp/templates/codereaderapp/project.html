@@ -1,0 +1,24 @@
+{% extends "codereaderapp/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}
+  {{ project.name }}
+  |
+  Code Reader
+{% endblock %}
+
+{% block head %}
+  {% if USE_PROD_JS_CSS %}
+    <script src="{% static 'codereaderapp/index.js' %}"></script>
+  {% else %}
+    <script src="{% static 'codereaderapp/index.jsx' %}" type="text/jsx"></script>
+  {% endif %}
+
+  <link rel="stylesheet" href="{% static 'codereaderapp/styles.css' %}" type="text/css" media="screen, projection">
+{% endblock %}
+
+{% block body %}
+  <div id="content">
+  </div>
+{% endblock %}

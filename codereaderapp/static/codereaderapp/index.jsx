@@ -79,7 +79,7 @@ var FileBrowser = React.createClass({
         this.loadDirectory(item.value);
     },
     loadDirectory: function(directory) {
-        $.get('/directory/', {directory: directory}, function(result) {
+        $.get('directory/', {directory: directory}, function(result) {
             this.setState(result);
         }.bind(this));
     },
@@ -178,7 +178,7 @@ var File = React.createClass({
             name: this.props.name,
             highlight: this.props.highlight
         };
-        $.get('/file/', params, function(result) {
+        $.get('file/', params, function(result) {
             result.selectedRow = location.row;
             this.setState(result);
         }.bind(this));
@@ -287,7 +287,7 @@ var SearchResult = React.createClass({
     },
     componentDidMount: function() {
         this.getDOMNode().scrollIntoView();
-        $.get('/search/' + this.props.term, function(result) {
+        $.get('search/' + this.props.term, function(result) {
             this.setState({matches: result.matches});
         }.bind(this));
     },
