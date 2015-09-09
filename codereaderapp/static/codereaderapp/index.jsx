@@ -222,10 +222,10 @@ var Lines = React.createClass({
             if (expectedRow !== undefined && expectedRow !== line.row) {
                 lines.push(
                     <tr>
-                        <td className="codeRow">
+                        <td className="line-row">
                             <code>...</code>
                         </td>
-                        <td className="codeLine">
+                        <td className="line-content">
                             <code></code>
                         </td>
                     </tr>
@@ -244,7 +244,7 @@ var Lines = React.createClass({
                 </table>
             </div>
         );
-    },
+    }
 });
 
 var Line = React.createClass({
@@ -254,29 +254,28 @@ var Line = React.createClass({
         }
     },
     render: function() {
-        var parts = this.props.line.parts.map(function(part) {
-            var classes = "";
-            part.annotations.map(function(annotation) {
-                if (annotation.type === "style") {
-                    classes += annotation.what;
-                    classes += " ";
-                }
-            });
-            return (
-                <span className={classes}>
-                    {part.text}
-                </span>
-            );
-        });
         return (
             <tr>
-                <td className="codeRow">
+                <td className="line-row">
                     <code>{this.props.line.row}</code>
                 </td>
-                <td className="codeLine">
-                    <code>{parts}</code>
+                <td className="line-content">
+                    <code>{this.props.line.parts.map(this.renderPart)}</code>
                 </td>
             </tr>
+        );
+    },
+    renderPart: function(part) {
+        var classes = part.annotations.map(function(annotation) {
+            if (annotation.type === "style") {
+                return annotation.what;
+            }
+            return "";
+        }).join(" ");
+        return (
+            <span className={classes}>
+                {part.text}
+            </span>
         );
     }
 });
@@ -333,7 +332,9 @@ var SearchResult = React.createClass({
                                   handleLocationClick={this.props.handleLocationClick} />
                 </span>
                 <span className="list-group-item-text">
-                    <Lines lines={match.lines} />
+                    <div className="panel panel-default">
+                        <Lines lines={match.lines} />
+                    </div>
                 </span>
             </li>
         );
