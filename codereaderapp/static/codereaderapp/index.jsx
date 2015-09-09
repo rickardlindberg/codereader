@@ -173,9 +173,6 @@ var File = React.createClass({
         return {
         };
     },
-    shouldComponentUpdate: function(nextProps, nextState) {
-        return ((nextProps.name !== this.props.name) || (nextState.lines !== this.state.lines));
-    },
     componentDidMount: function() {
         var params = {
             name: this.props.name,
@@ -199,15 +196,9 @@ var File = React.createClass({
     },
     renderBody: function() {
         if (this.state.lines) {
-            var lines = this.state.lines.map(function(line) {
-                var shouldScrollTo = this.state.selectedRow === line.row || (this.state.selectedRow === undefined && line.row === 1);
-                return <Line shouldScrollTo={shouldScrollTo} line={line} key={line.row} />;
-            }.bind(this));
             return (
                 <div className="panel-body file-content">
-                    <pre>
-                        {lines}
-                    </pre>
+                    <Lines selectedRow={this.state.selectedRow} lines={this.state.lines} />
                 </div>
             );
         } else {
@@ -218,6 +209,23 @@ var File = React.createClass({
             );
         }
     }
+});
+
+var Lines = React.createClass({
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return (nextProps.lines !== this.props.lines);
+    },
+    render: function() {
+        var lines = this.props.lines.map(function(line) {
+            var shouldScrollTo = this.props.selectedRow === line.row || (this.props.selectedRow === undefined && line.row === 1);
+            return <Line shouldScrollTo={shouldScrollTo} line={line} key={line.row} />;
+        }.bind(this));
+        return (
+            <pre>
+                {lines}
+            </pre>
+        );
+    },
 });
 
 var Line = React.createClass({
@@ -292,9 +300,6 @@ var SearchResult = React.createClass({
         );
     },
     renderMatchItem: function(match) {
-        var lines = match.lines.map(function(line) {
-            return <Line shouldScrollTo={false} line={line} />;
-        }.bind(this));
         return (
             <li className="list-group-item">
                 <span className="list-group-item-text">
@@ -304,9 +309,7 @@ var SearchResult = React.createClass({
                                   handleLocationClick={this.props.handleLocationClick} />
                 </span>
                 <span className="list-group-item-text file-content">
-                    <pre>
-                        {lines}
-                    </pre>
+                    <Lines lines={match.lines} />
                 </span>
             </li>
         );
