@@ -38,9 +38,8 @@ class TestCodeReaderApp(TestCase):
 
     def test_search(self):
         json_response = self.get_json("/search/4")
-        self.assertEqual(json_response["term"], "4")
         self.assertEqual(len(json_response["matches"]), 1)
-        self.assertEqual(json_response["matches"][0]["row"], 4)
+        self.assertEqual(json_response["matches"][0]["row_first_match"], 4)
 
     def get_json(self, url):
         return json.loads(self.client.get(url).content.decode("utf8"))

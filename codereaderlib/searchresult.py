@@ -14,16 +14,25 @@ class SearchResult(object):
         self._results.append((name, row, start_column, end_column))
 
     def render(self):
+        result_by_file = {}
+        for (name, row, start_column, end_column) in self._results:
+            if name not in result_by_file:
+                result_by_file[name] = {
+                    "first_row": row,
+                    "rows": [],
+                }
+            result_by_file[name]["rows"].extend([row-1, row, row+1])
         return {
-            'term': self._term,
             'matches': [
                 {
                     "file": name,
-                    "row": row,
-                    "lines": File(self._root, name).render_lines(Annotations(self.get_annotations(name)), [row-1, row, row+1]),
+                    "row_first_match": result_by_file[name]["first_row"],
+                    "lines": File(self._root, name).render_lines(
+                        Annotations(self.get_annotations(name)),
+                        sorted(list(set(result_by_file[name]["rows"])))
+                    ),
                 }
-                for (name, row, start_column, end_column)
-                in self._results
+                for name in sorted(result_by_file.keys())
             ],
         }
 
