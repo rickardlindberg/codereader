@@ -15,15 +15,13 @@ var CodeReader = React.createClass({
     handleSearchSubmit: function(event) {
         event.preventDefault();
         var term = React.findDOMNode(this.refs.search).value.trim();
-        $.get('/search/' + term, function(result) {
-            this.addElement({type: "search_result", value: result});
-        }.bind(this));
+        this.addElement({type: "search_result", term: term});
     },
     renderElement: function(element) {
         if (element.type === "file") {
             return <File name={element.name} highlight={element.highlight} />;
         } else if (element.type === "search_result") {
-            return <SearchResult handleLocationClick={this.handleLocationClick} result={element.value} />;
+            return <SearchResult handleLocationClick={this.handleLocationClick} term={element.term} />;
         } else {
             return <span>{element.value}</span>;
         }
@@ -252,36 +250,65 @@ var Line = React.createClass({
 });
 
 var SearchResult = React.createClass({
+    getInitialState: function() {
+        return {
+        };
+    },
     componentDidMount: function() {
         this.getDOMNode().scrollIntoView();
+        $.get('/search/' + this.props.term, function(result) {
+            this.setState({matches: result.matches});
+        }.bind(this));
     },
     render: function() {
-        var matches = this.props.result.matches.map(function(match) {
-            var lines = match.lines.map(function(line) {
-                return <Line shouldScrollTo={false} line={line} />;
-            }.bind(this));
-            return (
-                <li className="list-group-item">
-                    <span className="list-group-item-text">
-                        <LocationLink file={match.file} row={match.row} highlight={this.props.result.term} handleLocationClick={this.props.handleLocationClick} />
-                    </span>
-                    <span className="list-group-item-text file-content">
-                        <pre>
-                            {lines}
-                        </pre>
-                    </span>
-                </li>
-            );
-        }.bind(this));
         return (
             <div className="panel panel-default">
                 <div className="panel-heading">
-                    <strong>Search results: {this.props.result.term}</strong>
+                    <strong>Search results: {this.props.term}</strong>
                 </div>
-                <ul className="list-group search-result">
-                    {matches}
-                </ul>
+                {this.renderBody()}
             </div>
+        );
+    },
+    renderBody: function() {
+        if (this.state.matches === undefined) {
+            return this.renderBodyLoading();
+        } else {
+            return this.renderBodyMatches();
+        }
+    },
+    renderBodyLoading: function() {
+        return (
+            <div className="panel-body">
+                <span>Loading...</span>
+            </div>
+        );
+    },
+    renderBodyMatches: function() {
+        return (
+            <ul className="list-group search-result">
+                {this.state.matches.map(this.renderMatchItem)}
+            </ul>
+        );
+    },
+    renderMatchItem: function(match) {
+        var lines = match.lines.map(function(line) {
+            return <Line shouldScrollTo={false} line={line} />;
+        }.bind(this));
+        return (
+            <li className="list-group-item">
+                <span className="list-group-item-text">
+                    <LocationLink file={match.file}
+                                  row={match.row}
+                                  highlight={this.props.term}
+                                  handleLocationClick={this.props.handleLocationClick} />
+                </span>
+                <span className="list-group-item-text file-content">
+                    <pre>
+                        {lines}
+                    </pre>
+                </span>
+            </li>
         );
     }
 });
