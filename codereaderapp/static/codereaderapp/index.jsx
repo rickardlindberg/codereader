@@ -216,14 +216,33 @@ var Lines = React.createClass({
         return (nextProps.lines !== this.props.lines);
     },
     render: function() {
-        var lines = this.props.lines.map(function(line) {
+        var expectedRow = undefined;
+        var lines = []
+        this.props.lines.map(function(line) {
+            if (expectedRow !== undefined && expectedRow !== line.row) {
+                lines.push(
+                    <tr>
+                        <td className="codeRow">
+                            <code>...</code>
+                        </td>
+                        <td className="codeLine">
+                            <code></code>
+                        </td>
+                    </tr>
+                );
+            }
+            expectedRow = line.row + 1;
             var shouldScrollTo = this.props.selectedRow === line.row || (this.props.selectedRow === undefined && line.row === 1);
-            return <Line shouldScrollTo={shouldScrollTo} line={line} key={line.row} />;
+            lines.push(
+                <Line shouldScrollTo={shouldScrollTo} line={line} key={line.row} />
+            );
         }.bind(this));
         return (
-            <pre>
-                {lines}
-            </pre>
+            <div className="lines">
+                <table>
+                    {lines}
+                </table>
+            </div>
         );
     },
 });
@@ -250,9 +269,14 @@ var Line = React.createClass({
             );
         });
         return (
-            <span>
-                {parts}
-            </span>
+            <tr>
+                <td className="codeRow">
+                    <code>{this.props.line.row}</code>
+                </td>
+                <td className="codeLine">
+                    <code>{parts}</code>
+                </td>
+            </tr>
         );
     }
 });
@@ -308,7 +332,7 @@ var SearchResult = React.createClass({
                                   highlight={this.props.term}
                                   handleLocationClick={this.props.handleLocationClick} />
                 </span>
-                <span className="list-group-item-text file-content">
+                <span className="list-group-item-text">
                     <Lines lines={match.lines} />
                 </span>
             </li>
