@@ -8,6 +8,54 @@ from django.test import TestCase
 from codereaderapp.models import Project
 
 
+class ViewTestCase(TestCase):
+
+    def setUp(self):
+        self.tmp_dir = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
+
+    def create_project(self, slug, name="Test project"):
+        project = Project()
+        project.name = name
+        project.slug = slug
+        project.root = os.path.join(self.tmp_dir.name, slug)
+        project.save()
+        self._ensure_exists(project.root)
+
+    def write_file(self, path, lines):
+        full_path = os.path.join(*([self.tmp_dir.name] + path))
+        self._ensure_exists(os.path.dirname(full_path))
+        with open(full_path, "w") as f:
+            for line in lines:
+                f.write(line)
+
+    def get_json(self, url):
+        return json.loads(self.client.get(url).content.decode("utf8"))
+
+    def _ensure_exists(self, directory):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+
+class TestIndexView(ViewTestCase):
+
+    def test_empty_project_list(self):
+        response = self.client.get("/")
+        self.assertQuerysetEqual(response.context["projects"], [
+        ])
+
+    def test_non_empty_project_list(self):
+        self.create_project("test1", "Test 1")
+        self.create_project("test2", "Test 2")
+        response = self.client.get("/")
+        self.assertQuerysetEqual(response.context["projects"], [
+            "<Project: Test 1>",
+            "<Project: Test 2>",
+        ], ordered=False)
+
+
 class TestCodeReaderApp(TestCase):
 
     def setUp(self):
