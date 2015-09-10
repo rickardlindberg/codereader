@@ -72,6 +72,35 @@ class TestProjectView(ViewTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+
+class TestFileView(ViewTestCase):
+
+    def setUp(self):
+        ViewTestCase.setUp(self)
+        self.create_project("test")
+        self.write_file(["test", "README"], [
+            "line 1\n",
+            "line 2\n",
+            "line 3\n",
+            "line 4\n",
+            "line 5\n",
+        ])
+
+    def test_existing_file(self):
+        json_response = self.get_json("/test/file/?name=README")
+        self.assertEqual(json_response["name"], "README")
+        self.assertEqual(len(json_response["lines"]), 5)
+
+    def test_highlight(self):
+        json_response = self.get_json("/test/file/?name=README&highlight=5")
+        self.assertEqual(json_response["name"], "README")
+        self.assertEqual(json_response["lines"][4]["parts"], [
+            {"text": "line ", "annotations": []},
+            {"text": "5",     "annotations": [{"type": "style", "what": "hll"}]},
+            {"text": "\n",    "annotations": []},
+        ])
+
+
 class TestCodeReaderApp(TestCase):
 
     def setUp(self):
@@ -87,20 +116,6 @@ class TestCodeReaderApp(TestCase):
         test_project.slug = "test"
         test_project.root = self.tmp_dir.name
         test_project.save()
-
-    def test_file(self):
-        json_response = self.get_json("/test/file/?name=README")
-        self.assertEqual(json_response["name"], "README")
-        self.assertEqual(len(json_response["lines"]), 5)
-
-    def test_file_highlight(self):
-        json_response = self.get_json("/test/file/?name=README&highlight=5")
-        self.assertEqual(json_response["name"], "README")
-        self.assertEqual(json_response["lines"][4]["parts"], [
-            {"text": "line ", "annotations": []},
-            {"text": "5",     "annotations": [{"type": "style", "what": "hll"}]},
-            {"text": "\n",    "annotations": []},
-        ])
 
     def test_search(self):
         json_response = self.get_json("/test/search/4")
