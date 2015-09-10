@@ -101,6 +101,25 @@ class TestFileView(ViewTestCase):
         ])
 
 
+class TestDirectoryView(ViewTestCase):
+
+    def setUp(self):
+        ViewTestCase.setUp(self)
+        self.create_project("test")
+        self.write_file(["test", "README"], [])
+
+    def test_get_existing(self):
+        json_response = self.get_json("/test/directory/?directory=.")
+        self.assertEqual(json_response, {
+            "path": [
+                {"text": "Home", "value": "."},
+            ],
+            "items": [
+                {"type": "file", "text": "README", "value": "README"},
+            ],
+        })
+
+
 class TestCodeReaderApp(TestCase):
 
     def setUp(self):
