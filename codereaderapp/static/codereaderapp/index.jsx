@@ -12,18 +12,40 @@ var CodeReader = React.createClass({
         });
     },
     handleLocationClick: function(location) {
-        this.addElement({counter: this.state.counter, type: "file", name: location.file, highlight: location.highlight});
+        this.addElement({
+            counter: this.state.counter,
+            type: "file",
+            name: location.file,
+            row: location.row,
+            highlight: location.highlight
+        });
     },
     handleSearchSubmit: function(event) {
         event.preventDefault();
-        var term = React.findDOMNode(this.refs.search).value.trim();
-        this.addElement({counter: this.state.counter, type: "search_result", term: term});
+        this.addElement({
+            counter: this.state.counter,
+            type: "search_result",
+            term: React.findDOMNode(this.refs.search).value.trim()
+        });
     },
     renderElement: function(element) {
         if (element.type === "file") {
-            return <File name={element.name} highlight={element.highlight} key={element.counter} />;
+            return (
+                <File
+                    name={element.name}
+                    highlight={element.highlight}
+                    selectedRow={element.row}
+                    key={element.counter}
+                />
+            );
         } else if (element.type === "search_result") {
-            return <SearchResult handleLocationClick={this.handleLocationClick} term={element.term} key={element.counter} />;
+            return (
+                <SearchResult
+                    handleLocationClick={this.handleLocationClick}
+                    term={element.term}
+                    key={element.counter}
+                />
+            );
         }
     },
     render: function() {
@@ -179,7 +201,6 @@ var File = React.createClass({
             highlight: this.props.highlight
         };
         $.get('file/', params, function(result) {
-            result.selectedRow = location.row;
             this.setState(result);
         }.bind(this));
         this.getDOMNode().scrollIntoView();
@@ -198,7 +219,7 @@ var File = React.createClass({
         if (this.state.lines) {
             return (
                 <div className="panel-body file-content">
-                    <Lines selectedRow={this.state.selectedRow} lines={this.state.lines} />
+                    <Lines selectedRow={this.props.selectedRow} lines={this.state.lines} />
                 </div>
             );
         } else {
@@ -327,7 +348,7 @@ var SearchResult = React.createClass({
             <li className="list-group-item" key={index}>
                 <span className="list-group-item-text">
                     <LocationLink file={match.file}
-                                  row={match.row}
+                                  row={match.row_first_match}
                                   highlight={this.props.term}
                                   handleLocationClick={this.props.handleLocationClick} />
                 </span>
