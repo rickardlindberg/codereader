@@ -41,6 +41,10 @@ class ViewTestCase(TestCase):
 
 class TestIndexView(ViewTestCase):
 
+    def test_has_title(self):
+        response = self.client.get("/")
+        self.assertContains(response, "<title>Code Reader</title>")
+
     def test_empty_project_list(self):
         response = self.client.get("/")
         self.assertQuerysetEqual(response.context["projects"], [
@@ -83,10 +87,6 @@ class TestCodeReaderApp(TestCase):
         test_project.slug = "test"
         test_project.root = self.tmp_dir.name
         test_project.save()
-
-    def test_index(self):
-        response = self.client.get("/")
-        self.assertContains(response, "<title>Code Reader</title>")
 
     def test_file(self):
         json_response = self.get_json("/test/file/?name=README")
