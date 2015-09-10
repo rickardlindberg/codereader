@@ -5,7 +5,7 @@ import unittest
 from codereaderlib.repo import Repo
 
 
-class TestCodeReaderApp(unittest.TestCase):
+class TestSearch(unittest.TestCase):
 
     def setUp(self):
         self.tmp_dir = tempfile.TemporaryDirectory()
