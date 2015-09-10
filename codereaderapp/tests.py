@@ -56,6 +56,18 @@ class TestIndexView(ViewTestCase):
         ], ordered=False)
 
 
+class TestProjectView(ViewTestCase):
+
+    def test_existing_project(self):
+        self.create_project("test", "Test Project")
+        response = self.client.get("/test/")
+        self.assertEqual(response.context["project"].name, "Test Project")
+
+    def test_non_existing_project(self):
+        response = self.client.get("/test/")
+        self.assertEqual(response.status_code, 404)
+
+
 class TestCodeReaderApp(TestCase):
 
     def setUp(self):

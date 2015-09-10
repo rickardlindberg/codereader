@@ -1,6 +1,7 @@
 import os.path
 
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
 from codereaderapp.models import Project
@@ -20,7 +21,7 @@ def index(request):
 def project(request, project_slug):
     return render(request, 'codereaderapp/project.html', {
         "USE_PROD_JS_CSS": USE_PROD_JS_CSS,
-        "project": Project.objects.get(slug=project_slug),
+        "project": get_object_or_404(Project, slug=project_slug),
     })
 
 
