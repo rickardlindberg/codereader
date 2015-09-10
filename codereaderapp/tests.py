@@ -139,7 +139,7 @@ class TestSearchView(ViewTestCase):
         self.assertEqual(json_response["matches"][0]["row_first_match"], 4)
 
 
-class TestProject(TestCase):
+class TestProjectModel(TestCase):
 
     def test_slug_is_unique(self):
         Project(slug="test").save()
