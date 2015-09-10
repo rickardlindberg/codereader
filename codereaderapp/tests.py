@@ -120,29 +120,23 @@ class TestDirectoryView(ViewTestCase):
         })
 
 
-class TestCodeReaderApp(TestCase):
+class TestSearchView(ViewTestCase):
 
     def setUp(self):
-        self.tmp_dir = tempfile.TemporaryDirectory()
-        with open(os.path.join(self.tmp_dir.name, "README"), "w") as f:
-            f.write("line 1\n")
-            f.write("line 2\n")
-            f.write("line 3\n")
-            f.write("line 4\n")
-            f.write("line 5\n")
-        test_project = Project()
-        test_project.name = "Test Project"
-        test_project.slug = "test"
-        test_project.root = self.tmp_dir.name
-        test_project.save()
+        ViewTestCase.setUp(self)
+        self.create_project("test")
+        self.write_file(["test", "README"], [
+            "line 1\n",
+            "line 2\n",
+            "line 3\n",
+            "line 4\n",
+            "line 5\n",
+        ])
 
     def test_search(self):
         json_response = self.get_json("/test/search/4")
         self.assertEqual(len(json_response["matches"]), 1)
         self.assertEqual(json_response["matches"][0]["row_first_match"], 4)
-
-    def get_json(self, url):
-        return json.loads(self.client.get(url).content.decode("utf8"))
 
 
 class TestProject(TestCase):
