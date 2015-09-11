@@ -27,27 +27,27 @@ class Annotation(object):
 
     def get_intersections(self, line):
         intersections = set()
-        if (self._is_after_start(line.get_row(), line.get_max_column()) and
-            self._is_before_end(line.get_row(), 1)):
-
+        if self._line_overlaps(line):
             if line.get_row() > self._start_row:
                 intersections.add(0)
             else:
                 intersections.add(self._start_column - 1)
-
             if line.get_row() < self._end_row:
                 intersections.add(line.get_max_column())
             else:
                 intersections.add(self._end_column)
-
         return intersections
 
     def get_rows(self):
         return list(range(self._start_row, self._end_row + 1))
 
-    def has_location(self, row, column):
+    def contains_location(self, row, column):
         return (self._is_after_start(row, column) and
                 self._is_before_end(row, column))
+
+    def _line_overlaps(self, line):
+        return (self._is_after_start(line.get_row(), line.get_max_column()) and
+                self._is_before_end(line.get_row(), 1))
 
     def _is_after_start(self, row, column):
         return (row > self._start_row or

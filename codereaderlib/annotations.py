@@ -18,5 +18,5 @@ class Annotations(object):
         return [
             annotation._data
             for annotation in self._annotations_by_row.get(row, [])
-            if annotation.has_location(row, column)
+            if annotation.contains_location(row, column)
         ]
