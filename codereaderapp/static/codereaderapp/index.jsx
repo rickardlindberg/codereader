@@ -229,34 +229,9 @@ var File = React.createClass({
                 </div>
             );
         } else if (this.state.error) {
-            return (
-                <div className="panel-body">
-                    <span>Oops, something went wrong :-(</span>
-                </div>
-            );
+            return <BootstrapPanelBodyError />;
         } else {
-            return (
-                <div className="panel-body">
-                    <span>Loading...</span>
-                </div>
-            );
-        }
-    }
-});
-
-var BootstrapPanel = React.createClass({
-    render: function() {
-        return (
-            <div className={["panel", this.getPanelType()].join(" ")}>
-                {this.props.children}
-            </div>
-        );
-    },
-    getPanelType: function() {
-        if (this.props.error) {
-            return "panel-danger";
-        } else {
-            return "panel-default";
+            return <BootstrapPanelBodyLoading />;
         }
     }
 });
@@ -337,40 +312,41 @@ var SearchResult = React.createClass({
     },
     componentDidMount: function() {
         this.getDOMNode().scrollIntoView();
-        $.get('search/' + this.props.term, function(result) {
-            this.setState({matches: result.matches});
+        this.load();
+    },
+    load: function() {
+        $.get('search/' + this.props.term).done(function(result) {
+            this.setState({
+                matches: result.matches
+            });
+        }.bind(this)).fail(function(error) {
+            this.setState({
+                error: true
+            });
         }.bind(this));
     },
     render: function() {
         return (
-            <div className="panel panel-default">
+            <BootstrapPanel error={this.state.error}>
                 <div className="panel-heading">
                     <strong>Search results: {this.props.term}</strong>
                 </div>
                 {this.renderBody()}
-            </div>
+            </BootstrapPanel>
         );
     },
     renderBody: function() {
-        if (this.state.matches === undefined) {
-            return this.renderBodyLoading();
+        if (this.state.matches) {
+            return (
+                <ul className="list-group search-result">
+                    {this.state.matches.map(this.renderMatchItem)}
+                </ul>
+            );
+        } else if (this.state.error) {
+            return <BootstrapPanelBodyError />;
         } else {
-            return this.renderBodyMatches();
+            return <BootstrapPanelBodyLoading />;
         }
-    },
-    renderBodyLoading: function() {
-        return (
-            <div className="panel-body">
-                <span>Loading...</span>
-            </div>
-        );
-    },
-    renderBodyMatches: function() {
-        return (
-            <ul className="list-group search-result">
-                {this.state.matches.map(this.renderMatchItem)}
-            </ul>
-        );
     },
     renderMatchItem: function(match, index) {
         return (
@@ -415,6 +391,53 @@ var Link = React.createClass({
     render: function() {
         return (
             <a href="#" onClick={this.handleClick}>{this.props.children}</a>
+        );
+    }
+});
+
+var BootstrapPanel = React.createClass({
+    render: function() {
+        return (
+            <div className={["panel", this.getPanelType()].join(" ")}>
+                {this.props.children}
+            </div>
+        );
+    },
+    getPanelType: function() {
+        if (this.props.error) {
+            return "panel-danger";
+        } else {
+            return "panel-default";
+        }
+    }
+});
+
+var BootstrapPanelBody = React.createClass({
+    render: function() {
+        return (
+            <div className="panel-body">
+                {this.props.children}
+            </div>
+        );
+    }
+});
+
+var BootstrapPanelBodyError = React.createClass({
+    render: function() {
+        return (
+            <BootstrapPanelBody>
+                <span>Oops, something went wrong :-(</span>
+            </BootstrapPanelBody>
+        );
+    }
+});
+
+var BootstrapPanelBodyLoading = React.createClass({
+    render: function() {
+        return (
+            <BootstrapPanelBody>
+                <span>Loading...</span>
+            </BootstrapPanelBody>
         );
     }
 });
