@@ -1,8 +1,7 @@
-import subprocess
-
 from django.core.management.base import BaseCommand
 
 from codereaderapp.models import Project
+from codereaderlib.scm import Scm
 
 
 class Command(BaseCommand):
@@ -13,12 +12,4 @@ class Command(BaseCommand):
 
     def _reannotate(self, project):
         self.stdout.write("Reannotating %s" % project)
-        self._update_source_code(project)
-
-    def _update_source_code(self, project):
-        subprocess.call(
-            ["git", "pull"],
-            cwd=project.root,
-            stdout=self.stdout,
-            stderr=self.stderr
-        )
+        Scm.get(project.root, self.stdout, self.stderr).update()
