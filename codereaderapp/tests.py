@@ -91,6 +91,10 @@ class TestFileView(ViewTestCase):
         self.assertEqual(json_response["name"], "README")
         self.assertEqual(len(json_response["lines"]), 5)
 
+    def test_non_existing_file(self):
+        response = self.client.get("/test/file/?name=NON_EXISTING")
+        self.assertEqual(response.status_code, 500)
+
     def test_highlight(self):
         json_response = self.get_json("/test/file/?name=README&highlight=5")
         self.assertEqual(json_response["name"], "README")

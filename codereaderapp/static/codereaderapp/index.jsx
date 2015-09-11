@@ -196,23 +196,29 @@ var File = React.createClass({
         };
     },
     componentDidMount: function() {
-        var params = {
+        this.getDOMNode().scrollIntoView();
+        this.load();
+    },
+    load: function() {
+        $.get('file/', {
             name: this.props.name,
             highlight: this.props.highlight
-        };
-        $.get('file/', params, function(result) {
+        }).done(function(result) {
             this.setState(result);
+        }.bind(this)).fail(function(error) {
+            this.setState({
+                error: true
+            });
         }.bind(this));
-        this.getDOMNode().scrollIntoView();
     },
     render: function() {
         return (
-            <div className="panel panel-default">
+            <BootstrapPanel error={this.state.error}>
                 <div className="panel-heading">
                     <strong>{this.props.name}</strong>
                 </div>
                 {this.renderBody()}
-            </div>
+            </BootstrapPanel>
         );
     },
     renderBody: function() {
@@ -222,12 +228,35 @@ var File = React.createClass({
                     <Lines selectedRow={this.props.selectedRow} lines={this.state.lines} />
                 </div>
             );
+        } else if (this.state.error) {
+            return (
+                <div className="panel-body">
+                    <span>Oops, something went wrong :-(</span>
+                </div>
+            );
         } else {
             return (
                 <div className="panel-body">
                     <span>Loading...</span>
                 </div>
             );
+        }
+    }
+});
+
+var BootstrapPanel = React.createClass({
+    render: function() {
+        return (
+            <div className={["panel", this.getPanelType()].join(" ")}>
+                {this.props.children}
+            </div>
+        );
+    },
+    getPanelType: function() {
+        if (this.props.error) {
+            return "panel-danger";
+        } else {
+            return "panel-default";
         }
     }
 });

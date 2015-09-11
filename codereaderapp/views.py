@@ -1,8 +1,9 @@
 import os.path
 
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseServerError
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 
 from codereaderapp.models import Project
 from codereaderlib.analyzers.syntax_highlight import get_annotations
@@ -26,10 +27,13 @@ def project(request, project_slug):
 
 
 def file(request, project_slug):
-    project = Project.objects.get(slug=project_slug)
-    name = request.GET.get("name")
-    highlight = request.GET.get("highlight", "")
-    return JsonResponse(Repo(project.root).get_file(name).render_file(_get_annotations(project.root, name, highlight)))
+    try:
+        project = Project.objects.get(slug=project_slug)
+        name = request.GET.get("name")
+        highlight = request.GET.get("highlight", "")
+        return JsonResponse(Repo(project.root).get_file(name).render_file(_get_annotations(project.root, name, highlight)))
+    except:
+        return HttpResponseServerError()
 
 
 def directory(request, project_slug):
