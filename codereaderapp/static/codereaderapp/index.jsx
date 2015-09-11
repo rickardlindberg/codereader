@@ -101,18 +101,24 @@ var FileBrowser = React.createClass({
         this.loadDirectory(item.value);
     },
     loadDirectory: function(directory) {
-        $.get('directory/', {directory: directory}, function(result) {
-            this.setState(result);
+        $.get('directory/', {
+            directory: directory
+        }).done(function(result) {
+            this.replaceState(result);
+        }.bind(this)).fail(function(error) {
+            this.setState({
+                error: true
+            });
         }.bind(this));
     },
     render: function() {
         return (
-            <div className="panel panel-default">
+            <BootstrapPanel error={this.state.error}>
                 <div className="panel-heading">
                     {this.renderBreadcrumb()}
                 </div>
                 {this.renderList()}
-            </div>
+            </BootstrapPanel>
         );
     },
     renderBreadcrumb: function() {
