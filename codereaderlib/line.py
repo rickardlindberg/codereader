@@ -7,6 +7,12 @@ class Line(object):
     def get_row(self):
         return self._row
 
+    def get_max_column(self):
+        if self._text.endswith("\n"):
+            return (len(self._text) - 1)
+        else:
+            return len(self._text)
+
     def get_text(self):
         return self._text
 
@@ -30,7 +36,7 @@ class Line(object):
     def _get_intersections(self, annotations):
         intersections = set()
         intersections.add(0)
-        intersections.add(len(self._text))
+        intersections.add(self.get_max_column())
         intersections.update(annotations.get_intersections(self))
         return sorted(list(intersections))
 

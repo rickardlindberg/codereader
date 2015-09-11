@@ -97,7 +97,6 @@ class TestFileView(ViewTestCase):
         self.assertEqual(json_response["lines"][4]["parts"], [
             {"text": "line ", "annotations": []},
             {"text": "5",     "annotations": [{"type": "style", "what": "hll"}]},
-            {"text": "\n",    "annotations": []},
         ])
 
 

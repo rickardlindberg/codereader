@@ -81,6 +81,28 @@ class TestLinePartition(unittest.TestCase):
             ]
         )
 
+    def test_newlines_get_no_annotations(self):
+        self.assertEqual(
+            Line(2, "this\n").partition(Annotations([
+                Annotation(1, 1, 4, 3, sentinel.ANNOTATION),
+            ])),
+            [
+                {
+                    "text": "this",
+                    "annotations": [sentinel.ANNOTATION],
+                },
+            ]
+        )
+
+    def test_empty_lines_generate_no_annotations(self):
+        self.assertEqual(
+            Line(2, "\n").partition(Annotations([
+                Annotation(1, 1, 4, 3, sentinel.ANNOTATION),
+            ])),
+            [
+            ]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
