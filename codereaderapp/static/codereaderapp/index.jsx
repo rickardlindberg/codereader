@@ -7,7 +7,7 @@ var CodeReader = React.createClass({
     },
     addElement: function(element) {
         this.setState({
-            elements: this.state.elements.concat([element]),
+            elements: Array.prototype.concat(element, this.state.elements),
             counter: this.state.counter + 1
         });
     },
@@ -28,25 +28,35 @@ var CodeReader = React.createClass({
             term: React.findDOMNode(this.refs.search).value.trim()
         });
     },
-    renderElement: function(element) {
+    renderElement: function(element, index) {
         if (element.type === "file") {
-            return (
+            var child = (
                 <File
                     name={element.name}
                     highlight={element.highlight}
                     selectedRow={element.row}
-                    key={element.counter}
                 />
             );
         } else if (element.type === "search_result") {
-            return (
+            var child = (
                 <SearchResult
                     handleLocationClick={this.handleLocationClick}
                     term={element.term}
-                    key={element.counter}
                 />
             );
         }
+        var classNames = ["col-lg-6"];
+        if (index === 0) {
+            classNames.push("big-container");
+        }
+        if (index > 0) {
+            classNames.push("small-container");
+        }
+        return (
+            <div className={classNames.join(" ")} key={element.counter}>
+                {child}
+            </div>
+        );
     },
     render: function() {
         return (
@@ -72,13 +82,15 @@ var CodeReader = React.createClass({
                         </div>
                     </div>
                 </nav>
-                <div className="container">
+                <div className="container-fluid">
                     <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <FileBrowser handleLocationClick={this.handleLocationClick} />
                         </div>
-                        <div className="col-md-9">
-                            {this.state.elements.map(this.renderElement)}
+                        <div className="col-md-10">
+                            <div className="row">
+                                {this.state.elements.map(this.renderElement)}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -202,7 +214,6 @@ var File = React.createClass({
         };
     },
     componentDidMount: function() {
-        this.getDOMNode().scrollIntoView();
         this.load();
     },
     load: function() {
@@ -230,7 +241,7 @@ var File = React.createClass({
     renderBody: function() {
         if (this.state.lines) {
             return (
-                <div className="panel-body file-content">
+                <div className="panel-body lines-body">
                     <Lines selectedRow={this.props.selectedRow} lines={this.state.lines} />
                 </div>
             );
@@ -317,7 +328,6 @@ var SearchResult = React.createClass({
         };
     },
     componentDidMount: function() {
-        this.getDOMNode().scrollIntoView();
         this.load();
     },
     load: function() {
@@ -344,7 +354,7 @@ var SearchResult = React.createClass({
     renderBody: function() {
         if (this.state.matches) {
             return (
-                <ul className="list-group search-result">
+                <ul className="list-group">
                     {this.state.matches.map(this.renderMatchItem)}
                 </ul>
             );

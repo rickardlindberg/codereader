@@ -8,16 +8,17 @@ body {
     padding: 0px;
 }
 
-
-.file-content {
-    max-height: 350px;
+.small-container .panel-body, .small-container .list-group {
+    height: 219px;
     overflow: auto;
-    padding: 0px;
 }
 
-.search-result {
-    max-height: 500px;
+.big-container .panel-body, .big-container .list-group {
+    height: 500px;
     overflow: auto;
+}
+
+.lines-body {
     padding: 0px;
 }
 
@@ -44,7 +45,7 @@ body {
 }
 
 
-.lines, .lines code { background: #f8f8f8; color: #333333; }
+.lines-body, .lines, .lines code { background: #f8f8f8; color: #333333; }
 .line-row, .line-row code { background: #eeeeee; }
 .line-row { border-color: #cccccc; }
 .lines .hll { background-color: #ffffcc }
