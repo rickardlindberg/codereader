@@ -116,6 +116,19 @@ var FileBrowser = React.createClass({
         $.get('directory/', {
             directory: directory
         }).done(function(result) {
+            result.items.sort(function(left, right) {
+                if (left.type === "directory" && right.type !== "directory") {
+                    return -1;
+                } else if (right.type === "directory" && left.type !== "directory") {
+                    return 1;
+                } else if (left.text < right.text) {
+                    return -1;
+                } else if (left.text > right.text) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
             this.replaceState(result);
         }.bind(this)).fail(function(error) {
             this.setState({
