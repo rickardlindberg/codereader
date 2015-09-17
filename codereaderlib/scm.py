@@ -40,6 +40,7 @@ class Mercurial(Scm):
 
     def update(self):
         self.run(["hg", "pull"])
+        self.run(["hg", "update"])
 
 
 class Archive(Scm):
